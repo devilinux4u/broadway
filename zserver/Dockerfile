@@ -36,7 +36,7 @@ COPY migrations ./migrations
 RUN mkdir -p uploads
 
 # Expose port
-EXPOSE 1234
+EXPOSE 2004
 
 # Run the application
 CMD ["./ecom-server"]

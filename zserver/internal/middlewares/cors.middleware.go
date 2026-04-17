@@ -16,7 +16,7 @@ func CORSMiddleware() gin.HandlerFunc {
 			"http://127.0.0.1:3000",
 			"https://*.trycloudflare.com",
 			"https://trainers-anderson-diego-charges.trycloudflare.com",
-			"https://*.vercel.app", // Vercel deployments
+			"https://broadway-alpha.vercel.app", // Vercel deployments
 			// Add your production domain here:
 			// "https://your-domain.com",
 			// "https://www.your-domain.com",
