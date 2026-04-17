@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    container_name: ecom-backend
+    ports:
+      - "1234:1234"
+    environment:
+      # Database Configuration
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-ecom_db}
+      
+      # JWT Configuration
+      JWT_SECRET: ${JWT_SECRET:-secrete_is_to_sell_a_lot_of_products_and_be_rich_like_rich_rich}
+      
+      # Application Configuration
+      APP_ENV: ${APP_ENV:-production}
+      
+      # Khalti Payment Gateway
+      KHALTI_LIVE_KEY: ${KHALTI_LIVE_KEY:-e6d69d5238b6492993aa8b95247cac05}
+      KHALTI_BASE_URL: ${KHALTI_BASE_URL:-https://dev.khalti.com/api/v2/}
+      
+      # URLs
+      WEBSITE_URL: ${WEBSITE_URL:-http://localhost:1234}
+      RETURN_URL: ${RETURN_URL:-http://localhost:1234/verify-payment}
+    
+    depends_on:
+      postgres:
+        condition: service_healthy
+    
+    volumes:
+      - ./uploads:/app/uploads
+    
+    networks:
+      - ecom-network
+    
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: ecom-postgres
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-ecom_db}
+    
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/01-init.sh
+    
+    networks:
+      - ecom-network
+    
+    restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    
+    # Only expose locally for security
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
+
+networks:
+  ecom-network:
+    driver: bridge
