@@ -43,6 +43,7 @@ services:
 
 volumes:
   postgres_data:
+    name: ecom_postgres_data
 
 networks:
   ecom-network:
