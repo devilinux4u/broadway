@@ -1,5 +1,7 @@
 .PHONY: help install dev build run migrate-sql migrate-gorm db-create db-drop clean compose-up compose-down compose-logs
 
+COMPOSE := docker-compose
+
 help:
 	@echo "E-Commerce Backend Commands"
 	@echo "=============================="
@@ -81,16 +83,16 @@ docker-down:
 # Docker Compose commands
 compose-up:
 	@echo "Starting services without recreating an existing postgres container..."
-	docker-compose up -d --no-recreate postgres
-	docker-compose up -d backend
+	$(COMPOSE) up -d --no-recreate postgres
+	$(COMPOSE) up -d --no-deps backend
 
 compose-down:
 	@echo "Stopping Docker Compose services..."
-	docker-compose down
+	$(COMPOSE) down
 
 compose-logs:
 	@echo "Tailing Docker Compose logs..."
-	docker-compose logs -f --tail=100
+	$(COMPOSE) logs -f --tail=100
 
 # Full setup
 setup: install setup-env db-create migrate-sql
