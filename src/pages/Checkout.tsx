@@ -97,7 +97,7 @@ const Checkout = () => {
     return (
       <div className="min-h-screen bg-background">
         <Navbar settings={settings} />
-        <main className="pt-24 pb-20">
+        <main className="pt-8 md:pt-12 pb-20">
           <div className="container mx-auto px-4 max-w-lg text-center py-20">
             <CheckCircle2 className="w-20 h-20 text-primary mx-auto mb-6" />
             <h1 className="font-display text-3xl font-bold text-foreground mb-3">Order Placed!</h1>
@@ -116,7 +116,7 @@ const Checkout = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar settings={settings} />
-      <main className="pt-24 pb-20">
+      <main className="pt-10 md:pt-14 pb-20">
         <div className="container mx-auto px-4 max-w-4xl">
           <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
             <ArrowLeft size={16} /> Back
@@ -171,11 +171,12 @@ const Checkout = () => {
                 <h2 className="font-display text-lg font-semibold text-foreground mb-4">Order Summary</h2>
                 <div className="space-y-3 mb-4">
                   {items.map((item, idx) => (
-                    <div key={`${item.product_name}-${item.color || ""}-${idx}`} className="flex justify-between text-sm">
-                      <span className="text-foreground truncate mr-2">
-                        {item.product_name}{item.color ? ` (${item.color})` : ""} ×{item.quantity}
-                      </span>
-                      <span className="text-foreground font-medium whitespace-nowrap">
+                    <div key={`${item.product_name}-${item.color || ""}-${idx}`} className="flex justify-between items-start text-sm gap-2">
+                      <div className="text-foreground flex-1">
+                        <div className="break-words">{item.product_name}{item.color ? ` (${item.color})` : ""}</div>
+                        <div className="text-xs text-muted-foreground">Qty: {item.quantity}</div>
+                      </div>
+                      <span className="text-foreground font-medium whitespace-nowrap flex-shrink-0">
                         Rs. {(item.price_npr * item.quantity).toLocaleString()}
                       </span>
                     </div>

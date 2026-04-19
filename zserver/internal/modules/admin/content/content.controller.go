@@ -20,10 +20,10 @@ func NewController(service *Service) *Controller {
 
 // GetSection godoc
 // @Summary Get a specific content section
-// @Description Retrieve a specific content section by name (hero, categories, about, newsletter, settings)
+// @Description Retrieve a specific content section by name (hero, categories, about, newsletter, classes, settings)
 // @Tags Content
 // @Produce json
-// @Param section query string true "Section name (hero|categories|about|newsletter|settings)"
+// @Param section query string true "Section name (hero|categories|about|newsletter|classes|settings)"
 // @Success 200 {object} GetSectionResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 404 {object} ErrorResponse

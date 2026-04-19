@@ -57,6 +57,18 @@ type ReelItem struct {
 	VideoURL string `json:"video_url"`
 }
 
+// ClassItem represents a single class
+type ClassItem struct {
+	Title     string `json:"title"`
+	StartDate string `json:"start_date"`
+	EndDate   string `json:"end_date"`
+}
+
+// ClassesSectionContent represents classes section content
+type ClassesSectionContent struct {
+	Items []ClassItem `json:"items"`
+}
+
 // AboutSectionContent represents reels section content (stored in "about")
 type AboutSectionContent struct {
 	Reels []ReelItem `json:"reels"`

@@ -25,8 +25,8 @@ func (r *Repository) GetAllPageContent() ([]models.SiteContent, error) {
 	db := r.db
 	var contents []models.SiteContent
 
-	// Get specific sections: hero, categories, about, newsletter, settings
-	sections := []string{"hero", "categories", "about", "newsletter", "settings"}
+	// Get specific sections: hero, categories, about, newsletter, classes, settings
+	sections := []string{"hero", "categories", "about", "newsletter", "classes", "settings"}
 	result := db.Where("section IN ?", sections).Find(&contents)
 
 	if result.Error != nil {
@@ -42,6 +42,22 @@ func (r *Repository) GetSectionByName(section string) (*models.SiteContent, erro
 	var content models.SiteContent
 
 	result := db.Where("section = ?", section).First(&content)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, result.Error
+	}
+
+	return &content, nil
+}
+
+// GetClassesContent retrieves classes section - this method is called instead of fetching via GetSectionByName
+func (r *Repository) GetClassesContent() (*models.SiteContent, error) {
+	db := r.db
+	var content models.SiteContent
+
+	result := db.Where("section = ?", "classes").First(&content)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, nil

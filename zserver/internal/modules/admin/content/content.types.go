@@ -4,7 +4,7 @@ import "encoding/json"
 
 // UpdateSectionRequest represents the request for updating a content section
 type UpdateSectionRequest struct {
-	Section string          `json:"section" binding:"required,oneof=hero categories about newsletter settings"`
+	Section string          `json:"section" binding:"required,oneof=hero categories about newsletter classes settings"`
 	Content json.RawMessage `json:"content" binding:"required"`
 }
 

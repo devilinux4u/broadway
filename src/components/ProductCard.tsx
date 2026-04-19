@@ -22,9 +22,10 @@ interface ProductCardProps {
   images?: string[];
   badge?: string;
   colors?: { name: string; value: string }[];
+  description?: string;
 }
 
-const ProductCard = ({ name, id = "", priceNpr, originalPriceNpr, image, images, badge, colors }: ProductCardProps) => {
+const ProductCard = ({ name, id = "", priceNpr, originalPriceNpr, image, images, badge, colors, description }: ProductCardProps) => {
   const { addToCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -65,79 +66,78 @@ const ProductCard = ({ name, id = "", priceNpr, originalPriceNpr, image, images,
   };
 
   return (
-    <div className="group">
-      <div className="relative aspect-square overflow-hidden rounded-sm bg-secondary mb-4">
+    <div className="group bg-white rounded-lg shadow-sm hover:shadow-lg hover:scale-105 hover:-translate-y-1 transition-all duration-300 ease-out cursor-pointer">
+      {/* Image Container */}
+      <div className="relative aspect-square overflow-hidden rounded-lg bg-secondary mb-4">
         <img
           src={allImages[currentImageIndex]}
           alt={name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
         />
+        
+        {badge && (
+          <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-[10px] font-semibold tracking-wider uppercase px-3 py-1 rounded-sm">
+            {badge}
+          </span>
+        )}
+
         {/* Image navigation arrows */}
         {allImages.length > 1 && (
           <>
             <button
               onClick={prevImage}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-card/80 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-card text-foreground"
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-card/80 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-all duration-300 hover:bg-card text-foreground"
               aria-label="Previous image"
             >
               <ChevronLeft size={14} />
             </button>
             <button
               onClick={nextImage}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-card/80 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-card text-foreground"
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-card/80 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-all duration-300 hover:bg-card text-foreground"
               aria-label="Next image"
             >
               <ChevronRight size={14} />
             </button>
-            {/* Dots */}
-            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300">
-              {allImages.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(idx); }}
-                  className={`w-1.5 h-1.5 rounded-full transition-all ${
-                    idx === currentImageIndex ? "bg-primary w-3" : "bg-card/80"
-                  }`}
-                />
-              ))}
-            </div>
           </>
         )}
-        {badge && (
-          <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-[10px] font-semibold tracking-wider uppercase px-3 py-1 rounded-sm">
-            {badge}
-          </span>
+      </div>
+
+      {/* Divider */}
+      <div className="h-px bg-border opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+      {/* Content Container */}
+      <div className="px-4 pb-6 pt-2">
+        {/* Product Name */}
+        <h3 className="font-archivo text-[15px] font-bold text-foreground mb-2 line-clamp-2">
+          {name}
+        </h3>
+
+        {/* Description */}
+        {description && (
+          <p className="text-xs text-muted-foreground mb-3 line-clamp-2">
+            {description}
+          </p>
         )}
-        <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+
+        {/* Price and Add to Cart */}
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="text-base font-semibold text-foreground">
+              Rs. {priceNpr.toLocaleString()}
+            </span>
+            {originalPriceNpr && (
+              <span className="text-xs text-muted-foreground line-through">
+                Rs. {originalPriceNpr.toLocaleString()}
+              </span>
+            )}
+          </div>
           <button
             onClick={handleAddToCart}
-            className="w-full py-2.5 bg-foreground text-background text-sm font-medium tracking-wide rounded-sm hover:bg-foreground/90 transition-colors"
+            className="px-6 py-2.5 bg-foreground text-background text-sm font-semibold rounded-full hover:bg-foreground/90 transition-colors whitespace-nowrap"
           >
-            Add to Cart — {selectedColor.name}
+            Add to cart
           </button>
         </div>
-      </div>
-      <h3 className="font-medium text-sm text-foreground mb-1 group-hover:text-primary transition-colors">{name}</h3>
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-sm font-semibold text-foreground">Rs. {priceNpr.toLocaleString()}</span>
-        {originalPriceNpr && (
-          <span className="text-xs text-muted-foreground line-through">Rs. {originalPriceNpr.toLocaleString()}</span>
-        )}
-      </div>
-      <div className="flex items-center gap-1.5">
-        {availableColors.map((color) => (
-          <button
-            key={color.name}
-            onClick={() => setSelectedColor(color)}
-            title={color.name}
-            className={`w-5 h-5 rounded-full border-2 transition-all duration-200 ${
-              selectedColor.name === color.name
-                ? "border-primary scale-110 ring-1 ring-primary/30"
-                : "border-border hover:border-muted-foreground"
-            }`}
-            style={{ backgroundColor: color.value }}
-          />
-        ))}
       </div>
     </div>
   );

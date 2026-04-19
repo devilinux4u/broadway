@@ -1,5 +1,6 @@
 import { getImageUrl } from "@/utils/imageUrl";
-import categoryPromoImage from "@/assets/category.png";
+import { useSiteContent } from "@/hooks/useSiteContent";
+import { Calendar } from "lucide-react";
 
 interface CategorySectionProps {
   data?: Record<string, any>;
@@ -9,6 +10,10 @@ const CategorySection = ({ data = {} }: CategorySectionProps) => {
   const catContent = data || {};
   const categories = Array.isArray(catContent.items) ? catContent.items : [];
   const featuredCategories = categories;
+  const { getSection } = useSiteContent();
+  const classesData = getSection("classes") || {};
+  const classItems = Array.isArray(classesData.items) ? classesData.items : [];
+  const upcomingClasses = classItems.slice(0, 3);
 
   if (categories.length === 0) {
     return null;
@@ -51,8 +56,68 @@ const CategorySection = ({ data = {} }: CategorySectionProps) => {
             </div>
           </div>
 
-          <div className="relative min-h-[220px] md:min-h-[280px] bg-muted">
-            <img src={categoryPromoImage} alt="Category Promo" className="absolute inset-0 w-full h-full object-cover" />
+          <div className="relative min-h-[220px] md:min-h-[280px] bg-gradient-to-br from-primary/10 to-accent/10 rounded-sm overflow-hidden flex flex-col items-center justify-center p-6">
+            {upcomingClasses.length > 0 ? (
+              <div className="w-full h-full flex flex-col justify-between">
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <Calendar size={18} className="text-primary" />
+                  <h3 className="font-display text-lg md:text-xl font-semibold text-foreground">Upcoming Classes</h3>
+                </div>
+                <div className="space-y-3 flex-1 overflow-y-auto">
+                  {upcomingClasses.map((cls: any, idx: number) => {
+                    const startDate = new Date(cls.start_date);
+                    const endDate = new Date(cls.end_date);
+                    const isStarted = startDate <= new Date();
+                    const isEnded = endDate < new Date();
+                    
+                    let statusText = "Coming Soon";
+                    let statusBgColor = "bg-primary";
+                    
+                    if (isEnded) {
+                      statusText = "Ended";
+                      statusBgColor = "bg-muted-foreground";
+                    } else if (isStarted && !isEnded) {
+                      statusText = "Ongoing";
+                      statusBgColor = "bg-accent";
+                    }
+                    
+                    return (
+                      <div
+                        key={idx}
+                        className="p-3 md:p-4 rounded-sm border-2 bg-primary/10 border-primary/30 hover:border-primary/50 hover:shadow-md transition-all flex gap-3 items-center justify-between"
+                      >
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-sm mb-1 line-clamp-2 text-foreground">
+                            {cls.title}
+                          </h4>
+                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                            <span className="font-medium">
+                              {startDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                            </span>
+                            <span>→</span>
+                            <span className="font-medium">
+                              {endDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                            </span>
+                          </div>
+                        </div>
+                        <span className={`${statusBgColor} text-white text-xs font-semibold px-2 py-1 rounded whitespace-nowrap h-fit`}>
+                          {statusText}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="text-center pt-3 border-t border-border/30">
+                  <p className="text-xs text-muted-foreground">More classes coming soon!</p>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full text-center gap-2">
+                <Calendar size={32} className="text-muted-foreground/40" />
+                <p className="text-sm text-muted-foreground font-medium">No classes scheduled</p>
+                <p className="text-xs text-muted-foreground/60">Check back soon for upcoming classes</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

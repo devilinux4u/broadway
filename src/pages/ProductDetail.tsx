@@ -31,11 +31,12 @@ const ProductDetail = () => {
   const [product, setProduct] = useState<any>(null);
   const [images, setImages] = useState<string[]>([]);
   const [currentImage, setCurrentImage] = useState(0);
-  const [availableColors, setAvailableColors] = useState(DEFAULT_COLORS);
-  const [selectedColor, setSelectedColor] = useState(DEFAULT_COLORS[0]);
+  const [availableColors, setAvailableColors] = useState<any[]>([]);
+  const [selectedColor, setSelectedColor] = useState<any>(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
+  const [expandedDescription, setExpandedDescription] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -60,9 +61,17 @@ const ProductDetail = () => {
 
         // Set available colors from API
         if (productResponse.colors && productResponse.colors.length > 0) {
-          const productCols = productResponse.colors;
-          setAvailableColors(productCols);
-          setSelectedColor(productCols[0]);
+          const productCols = productResponse.colors.filter((col: any) => col && col.name && col.value);
+          if (productCols.length > 0) {
+            setAvailableColors(productCols);
+            setSelectedColor(productCols[0]);
+          } else {
+            setAvailableColors([]);
+            setSelectedColor(null);
+          }
+        } else {
+          setAvailableColors([]);
+          setSelectedColor(null);
         }
 
         // Load related products by category
@@ -97,7 +106,7 @@ const ProductDetail = () => {
           product_name: product.name,
           product_image: images[0] || "",
           price_npr: product.price_npr,
-          color: selectedColor.name,
+          color: selectedColor?.name || "default",
         });
       }
       toast({ title: "Added to cart", description: `${quantity}x ${product.name} added to your cart.` });
@@ -142,7 +151,7 @@ const ProductDetail = () => {
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Navbar settings={settings} />
-      <main className="pt-20 md:pt-24">
+      <main className="pt-7 md:pt-19">
         <div className="container mx-auto px-4">
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
@@ -155,45 +164,15 @@ const ProductDetail = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-14">
             {/* Image Gallery */}
-            <div className="space-y-4">
-              <div className="relative aspect-square overflow-hidden rounded-sm bg-secondary">
-                {images.length > 0 ? (
-                  <img
-                    src={images[currentImage]}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">No image</div>
-                )}
-                {images.length > 1 && (
-                  <>
-                    <button
-                      onClick={() => setCurrentImage((p) => (p - 1 + images.length) % images.length)}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-card/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-card transition-colors"
-                    >
-                      <ChevronLeft size={18} />
-                    </button>
-                    <button
-                      onClick={() => setCurrentImage((p) => (p + 1) % images.length)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-card/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-card transition-colors"
-                    >
-                      <ChevronRight size={18} />
-                    </button>
-                  </>
-                )}
-                {product.badge && (
-                  <Badge className="absolute top-4 left-4 bg-primary text-primary-foreground">{product.badge}</Badge>
-                )}
-              </div>
+            <div className="flex gap-4">
               {/* Thumbnails */}
               {images.length > 1 && (
-                <div className="flex gap-2 overflow-x-auto pb-2">
+                <div className="flex flex-col gap-2 w-16 flex-shrink-0">
                   {images.map((img, idx) => (
                     <button
                       key={idx}
                       onClick={() => setCurrentImage(idx)}
-                      className={`flex-shrink-0 w-16 h-16 rounded-sm overflow-hidden border-2 transition-all ${
+                      className={`w-full h-16 rounded-sm overflow-hidden border-2 transition-all flex-shrink-0 ${
                         idx === currentImage ? "border-primary" : "border-border"
                       }`}
                     >
@@ -202,56 +181,97 @@ const ProductDetail = () => {
                   ))}
                 </div>
               )}
+              <div className="flex-1">
+                <div className="relative w-full aspect-square max-h-[600px] md:max-h-[700px] overflow-hidden rounded-sm">
+                {images.length > 0 ? (
+                  <img
+                    src={images[currentImage]}
+                    alt={product.name}
+                    className="w-full h-full object-contain"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">No image</div>
+                )}
+                {product.badge && (
+                  <Badge className="absolute top-4 left-4 bg-primary text-primary-foreground">{product.badge}</Badge>
+                )}
+              </div>
+            </div>
             </div>
 
             {/* Product Info */}
-            <div className="space-y-6">
+            <div className="space-y-6 pb-20 md:pb-24">
               <div>
-                <p className="text-sm tracking-[0.2em] uppercase text-primary mb-2">{product.category}</p>
-                <h1 className="font-display text-3xl md:text-4xl font-semibold text-foreground mb-3">{product.name}</h1>
-                <div className="flex items-baseline gap-3">
-                  <span className="text-2xl font-bold text-foreground">Rs. {product.price_npr.toLocaleString()}</span>
+                <p className="text-xs tracking-[0.3em] uppercase text-muted-foreground mb-2">{product.category}</p>
+                <h1 className="font-archivo text-2xl md:text-3xl font-semibold text-foreground mb-3">{product.name}</h1>
+                <div className="flex items-center gap-5">
+                  <span className="text-xl font-bold text-foreground">Rs. {product.price_npr.toLocaleString()}</span>
+                  {(product.in_stock === true || product.in_stock === 1 || product.stock_quantity > 0) ? (
+                    <span className="text-sm font-medium text-primary flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-primary" />
+                      In Stock {product.stock_quantity ? `(${product.stock_quantity})` : ""}
+                    </span>
+                  ) : (
+                    <span className="text-sm font-medium text-destructive flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-destructive" />
+                      Out of Stock
+                    </span>
+                  )}
                 </div>
-              </div>
-
-              {/* Stock Status */}
-              <div className="flex items-center gap-2">
-                {product.in_stock && product.stock_quantity > 0 ? (
-                  <span className="text-sm font-medium text-primary flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-primary" />
-                    In Stock ({product.stock_quantity} available)
-                  </span>
-                ) : (
-                  <span className="text-sm font-medium text-destructive flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-destructive" />
-                    Out of Stock
-                  </span>
-                )}
               </div>
 
               {product.description && (
-                <p className="text-muted-foreground leading-relaxed">{product.description}</p>
+                <div>
+                  {!expandedDescription ? (
+                    <div>
+                      <p className="text-muted-foreground leading-relaxed line-clamp-5">
+                        {product.description}
+                      </p>
+                      {(product.description.split('\n').length > 5 || product.description.length > 250) && (
+                        <button
+                          onClick={() => setExpandedDescription(true)}
+                          className="ml-0 text-primary hover:text-primary/80 transition-colors font-medium text-sm mt-1"
+                        >
+                          See more
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-muted-foreground leading-relaxed">{product.description}</p>
+                      {(product.description.split('\n').length > 5 || product.description.length > 250) && (
+                        <button
+                          onClick={() => setExpandedDescription(false)}
+                          className="text-sm font-medium text-primary hover:text-primary/80 transition-colors mt-2"
+                        >
+                          See less
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
               )}
 
-              {/* Color Selection */}
-              <div>
-                <p className="text-sm font-medium text-foreground mb-3">Color: {selectedColor.name}</p>
-                <div className="flex items-center gap-2">
-                  {availableColors.map((color) => (
-                    <button
-                      key={color.name}
-                      onClick={() => setSelectedColor(color)}
-                      title={color.name}
-                      className={`w-8 h-8 rounded-full border-2 transition-all ${
-                        selectedColor.name === color.name
-                          ? "border-primary scale-110 ring-2 ring-primary/30"
-                          : "border-border hover:border-muted-foreground"
-                      }`}
-                      style={{ backgroundColor: color.value }}
-                    />
-                  ))}
+              {/* Color Selection - Only show if valid colors exist */}
+              {availableColors.length > 0 && availableColors.some(c => c.name && c.value) && (
+                <div>
+                  <div className="flex items-center gap-2">
+                    {availableColors.map((color) => (
+                      <button
+                        key={color.name}
+                        onClick={() => setSelectedColor(color)}
+                        title={color.name}
+                        className={`w-8 h-8 rounded-full border-2 transition-all ${
+                          selectedColor.name === color.name
+                            ? "border-primary scale-110 ring-2 ring-primary/30"
+                            : "border-border hover:border-muted-foreground"
+                        }`}
+                        style={{ backgroundColor: color.value }}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Quantity */}
               <div>
@@ -275,15 +295,14 @@ const ProductDetail = () => {
 
               {/* Actions */}
               <div className="flex gap-3 pt-2">
-                <Button
+                <button
                   onClick={handleAddToCart}
                   disabled={!product.in_stock}
-                  className="flex-1 h-12 text-sm tracking-wide gap-2"
-                  size="lg"
+                  className="flex-1 h-12 px-6 py-2.5 bg-foreground text-background text-sm font-semibold rounded-full hover:bg-foreground/90 transition-colors gap-2 flex items-center justify-center disabled:opacity-50"
                 >
                   <ShoppingBag size={18} />
                   Add to Cart — Rs. {(product.price_npr * quantity).toLocaleString()}
-                </Button>
+                </button>
                 <Button variant="outline" size="lg" className="h-12" onClick={handleShare}>
                   <Share2 size={18} />
                 </Button>

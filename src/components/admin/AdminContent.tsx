@@ -23,6 +23,7 @@ const AdminContent = () => {
   const [categories, setCategories] = useState<any>({ items: [] });
   const [about, setAbout] = useState<any>({ reels: [] });
   const [newsletter, setNewsletter] = useState<any>({});
+  const [classes, setClasses] = useState<any>({ items: [] });
   const [settings, setSettings] = useState<any>({});
   const [products, setProducts] = useState<any[]>([]);
   const [productsLoading, setProductsLoading] = useState(false);
@@ -37,6 +38,7 @@ const AdminContent = () => {
     if (contentData.categories) setCategories(contentData.categories);
     if (contentData.about) setAbout(contentData.about);
     if (contentData.newsletter) setNewsletter(contentData.newsletter);
+    if (contentData.classes) setClasses(contentData.classes);
     if (contentData.settings) setSettings(contentData.settings);
   }, [contentData]);
 
@@ -188,6 +190,7 @@ const AdminContent = () => {
     { id: "categories", label: "Categories" },
     { id: "about", label: "Reels Section" },
     { id: "newsletter", label: "Newsletter" },
+    { id: "classes", label: "Classes" },
     { id: "featured", label: "Featured & New Arrivals" },
     { id: "settings", label: "Settings" },
   ];
@@ -344,6 +347,32 @@ const AdminContent = () => {
           </button>
           <button onClick={() => saveSection("about", about)} disabled={saving === "about"} className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground text-sm font-medium rounded-sm hover:bg-primary/90 disabled:opacity-50">
             <Save size={14} /> {saving === "about" ? "Saving..." : "Save Reels"}
+          </button>
+        </div>
+      )}
+
+      {/* Classes */}
+      {activeSection === "classes" && (
+        <div className="bg-card border border-border rounded-sm p-6 space-y-4">
+          <h3 className="font-display text-lg font-semibold text-foreground">Classes</h3>
+          {(classes.items || []).map((cls: any, idx: number) => (
+            <div key={idx} className="border border-border rounded-sm p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-foreground">Class {idx + 1}</span>
+                <button onClick={() => setClasses({ ...classes, items: classes.items.filter((_: any, i: number) => i !== idx) })} className="text-muted-foreground hover:text-destructive"><Trash2 size={14} /></button>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="sm:col-span-2"><label className={labelClass}>Title</label><input value={cls.title || ""} onChange={e => { const items = [...classes.items]; items[idx] = { ...items[idx], title: e.target.value }; setClasses({ ...classes, items }); }} className={inputClass} placeholder="Class Title" /></div>
+                <div><label className={labelClass}>Start Date</label><input type="date" value={cls.start_date || ""} onChange={e => { const items = [...classes.items]; items[idx] = { ...items[idx], start_date: e.target.value }; setClasses({ ...classes, items }); }} className={inputClass} /></div>
+                <div><label className={labelClass}>End Date</label><input type="date" value={cls.end_date || ""} onChange={e => { const items = [...classes.items]; items[idx] = { ...items[idx], end_date: e.target.value }; setClasses({ ...classes, items }); }} className={inputClass} /></div>
+              </div>
+            </div>
+          ))}
+          <button onClick={() => setClasses({ ...classes, items: [...(classes.items || []), { title: "", start_date: "", end_date: "" }] })} className="flex items-center gap-1 text-xs text-primary hover:underline">
+            <Plus size={12} /> Add Class
+          </button>
+          <button onClick={() => saveSection("classes", classes)} disabled={saving === "classes"} className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground text-sm font-medium rounded-sm hover:bg-primary/90 disabled:opacity-50">
+            <Save size={14} /> {saving === "classes" ? "Saving..." : "Save Classes"}
           </button>
         </div>
       )}

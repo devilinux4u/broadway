@@ -3,6 +3,8 @@ package mainpage
 import (
 	"encoding/json"
 	"errors"
+	"sort"
+	"time"
 )
 
 // Service handles business logic for main page content
@@ -15,6 +17,57 @@ func NewService(repo *Repository) *Service {
 	return &Service{
 		repo: repo,
 	}
+}
+
+// filterAndSortClasses returns only ongoing and upcoming classes (no ended)
+// Priority: ongoing first, then upcoming
+// Max 2 classes total
+func filterAndSortClasses(classes ClassesSectionContent) ClassesSectionContent {
+	now := time.Now().Truncate(24 * time.Hour)
+
+	type classWithStatus struct {
+		item      ClassItem
+		isOngoing bool
+		startTime time.Time
+	}
+
+	var validClasses []classWithStatus
+
+	for _, class := range classes.Items {
+		// Parse dates
+		startDate, errStart := time.Parse("2006-01-02", class.StartDate)
+		endDate, errEnd := time.Parse("2006-01-02", class.EndDate)
+
+		if errStart != nil || errEnd != nil {
+			continue // Skip if dates can't be parsed
+		}
+
+		// Only include: startDate >= now OR (startDate <= now AND endDate >= now)
+		if startDate.After(now) {
+			// Upcoming
+			validClasses = append(validClasses, classWithStatus{item: class, isOngoing: false, startTime: startDate})
+		} else if endDate.After(now) || endDate.Equal(now) {
+			// Ongoing (start date is today or past, and end date is today or future)
+			validClasses = append(validClasses, classWithStatus{item: class, isOngoing: true, startTime: startDate})
+		}
+		// Else: ended (startDate is in past AND endDate is in past), skip completely
+	}
+
+	// Sort: ongoing first, then upcoming by start date
+	sort.Slice(validClasses, func(i, j int) bool {
+		if validClasses[i].isOngoing != validClasses[j].isOngoing {
+			return validClasses[i].isOngoing // Ongoing (true) comes first
+		}
+		return validClasses[i].startTime.Before(validClasses[j].startTime)
+	})
+
+	// Keep max 2
+	result := ClassesSectionContent{Items: []ClassItem{}}
+	for i := 0; i < len(validClasses) && i < 2; i++ {
+		result.Items = append(result.Items, validClasses[i].item)
+	}
+
+	return result
 }
 
 // GetPageContent retrieves all content sections for the main/index page
@@ -64,6 +117,15 @@ func (s *Service) GetPageContent() (map[string]interface{}, error) {
 				continue
 			}
 			result[content.Section] = newsletterContent
+		case "classes":
+			var classesContent ClassesSectionContent
+			if err := json.Unmarshal(content.Content, &classesContent); err != nil {
+				result[content.Section] = json.RawMessage(content.Content)
+				continue
+			}
+			// Filter and sort classes: only ongoing and upcoming, max 2, ongoing first
+			filteredClasses := filterAndSortClasses(classesContent)
+			result[content.Section] = filteredClasses
 		case "settings":
 			var settingsContent SettingsSectionContent
 			if err := json.Unmarshal(content.Content, &settingsContent); err != nil {
@@ -121,6 +183,14 @@ func (s *Service) GetSectionContent(section string) (interface{}, error) {
 			return json.RawMessage(content.Content), nil
 		}
 		return newsletterContent, nil
+	case "classes":
+		var classesContent ClassesSectionContent
+		if err := json.Unmarshal(content.Content, &classesContent); err != nil {
+			return json.RawMessage(content.Content), nil
+		}
+		// Filter and sort classes: only ongoing and upcoming, max 2, ongoing first
+		filteredClasses := filterAndSortClasses(classesContent)
+		return filteredClasses, nil
 	case "settings":
 		var settingsContent SettingsSectionContent
 		if err := json.Unmarshal(content.Content, &settingsContent); err != nil {

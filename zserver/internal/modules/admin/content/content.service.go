@@ -59,6 +59,7 @@ func (s *Service) UpdateSection(section string, content json.RawMessage) (*model
 		"categories": true,
 		"about":      true,
 		"newsletter": true,
+		"classes":    true,
 		"settings":   true,
 	}
 
@@ -193,6 +194,28 @@ func (s *Service) ValidateCategoriesContent(data json.RawMessage) error {
 	return nil
 }
 
+// ValidateClassesContent validates classes section content
+func (s *Service) ValidateClassesContent(data json.RawMessage) error {
+	var classes models.ClassesContent
+	if err := json.Unmarshal(data, &classes); err != nil {
+		return fmt.Errorf("invalid classes content format: %w", err)
+	}
+
+	for i, cls := range classes.Items {
+		if strings.TrimSpace(cls.Title) == "" {
+			return fmt.Errorf("class #%d title is required", i+1)
+		}
+		if strings.TrimSpace(cls.StartDate) == "" {
+			return fmt.Errorf("class #%d start_date is required", i+1)
+		}
+		if strings.TrimSpace(cls.EndDate) == "" {
+			return fmt.Errorf("class #%d end_date is required", i+1)
+		}
+	}
+
+	return nil
+}
+
 // ValidateAboutContent validates about section content
 func (s *Service) ValidateAboutContent(data json.RawMessage) error {
 	var about models.AboutContent
@@ -251,6 +274,8 @@ func (s *Service) ValidateContent(section string, content json.RawMessage) error
 		return s.ValidateAboutContent(content)
 	case "newsletter":
 		return s.ValidateNewsletterContent(content)
+	case "classes":
+		return s.ValidateClassesContent(content)
 	case "settings":
 		return s.ValidateSettingsContent(content)
 	default:
