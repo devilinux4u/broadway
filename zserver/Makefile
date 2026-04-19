@@ -1,6 +1,6 @@
-.PHONY: help install dev build run migrate-sql migrate-gorm db-create db-drop clean compose-up compose-down compose-logs
+.PHONY: help install dev build run migrate-sql migrate-gorm db-create db-drop clean compose-check compose-up compose-down compose-logs
 
-COMPOSE := docker-compose
+COMPOSE ?= docker compose
 
 help:
 	@echo "E-Commerce Backend Commands"
@@ -81,7 +81,16 @@ docker-down:
 	docker rm postgres-ecom
 
 # Docker Compose commands
-compose-up:
+compose-check:
+	@set -e; \
+	VERSION="$$( $(COMPOSE) version 2>/dev/null || true )"; \
+	if echo "$$VERSION" | grep -qiE 'docker-compose version 1\\.|compose==1\\.'; then \
+		echo "Legacy docker-compose v1 detected: $$VERSION"; \
+		echo "Install Docker Compose v2 plugin and rerun."; \
+		exit 1; \
+	fi
+
+compose-up: compose-check
 	@echo "Starting services without recreating an existing postgres container..."
 	$(COMPOSE) up -d --no-recreate postgres
 	$(COMPOSE) up -d --no-deps backend
