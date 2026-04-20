@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - Docker and Docker Compose installed on your VPS
-- Port 1234 available (or modify docker-compose.yml)
+- Port 2004 available (or modify docker-compose.yml)
 
 ## Deployment Steps
 
@@ -36,58 +36,58 @@ nano .env
 
 ```bash
 # Build and start services
-docker-compose up -d
+docker compose up -d
 
 # View logs
-docker-compose logs -f backend
+docker compose logs -f backend
 
 # Check status
-docker-compose ps
+docker compose ps
 ```
 
 ### 4. Verify Deployment
 
 ```bash
-curl http://localhost:1234/health
+curl http://localhost:2004/health
 ```
 
 ## Useful Commands
 
 ### View Logs
 ```bash
-docker-compose logs -f backend
-docker-compose logs -f postgres
+docker compose logs -f backend
+docker compose logs -f postgres
 ```
 
 ### Stop Services
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ### Stop and Remove Volumes (Warning: Deletes data)
 ```bash
-docker-compose down -v
+docker compose down -v
 ```
 
 ### Rebuild Image
 ```bash
-docker-compose build --no-cache
-docker-compose up -d
+docker compose build --no-cache
+docker compose up -d
 ```
 
 ### Database Access
 ```bash
-docker-compose exec postgres psql -U postgres -d ecom_db
+docker compose exec postgres psql -U postgres -d ecom_db
 ```
 
 ### Restart Services
 ```bash
-docker-compose restart
+docker compose restart
 ```
 
 ## Port Configuration
 
-The backend runs on **port 1234**. Update your reverse proxy (nginx, Apache, etc.) to forward requests:
+The backend runs on **port 2004**. Update your reverse proxy (nginx, Apache, etc.) to forward requests:
 
 ### Nginx Example
 ```nginx
@@ -96,7 +96,7 @@ server {
     server_name your-domain.com;
 
     location /api {
-        proxy_pass http://localhost:1234;
+        proxy_pass http://localhost:2004;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -116,20 +116,20 @@ server {
 ### Database Connection Issues
 ```bash
 # Check if postgres is running
-docker-compose ps
+docker compose ps
 
 # View postgres logs
-docker-compose logs postgres
+docker compose logs postgres
 
 # Verify environment variables
-docker-compose config
+docker compose config
 ```
 
 ### Port Already in Use
-If port 1234 is busy, modify `docker-compose.yml`:
+If port 2004 is busy, modify `docker-compose.yml`:
 ```yaml
 ports:
-  - "YOUR_PORT:1234"
+  - "YOUR_PORT:2004"
 ```
 
 ### Permission Issues
