@@ -10,8 +10,7 @@ services:
       - ./uploads:/app/uploads
     
     depends_on:
-      postgres:
-        condition: service_healthy
+      - postgres
     
     networks:
       - ecom-network
@@ -31,13 +30,6 @@ services:
       - ecom-network
     
     restart: unless-stopped
-
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 15s
 
 volumes:
   postgres_data:
