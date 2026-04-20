@@ -254,3 +254,22 @@ func (s *Service) GetNewArrivalProducts() ([]FeaturedProductDTO, error) {
 
 	return result, nil
 }
+
+// GetAllClasses retrieves all classes with their schedule information
+func (s *Service) GetAllClasses() ([]ClassItem, error) {
+	content, err := s.repo.GetSectionByName("classes")
+	if err != nil {
+		return nil, err
+	}
+
+	if content == nil {
+		return []ClassItem{}, nil
+	}
+
+	var classesContent ClassesSectionContent
+	if err := json.Unmarshal(content.Content, &classesContent); err != nil {
+		return nil, err
+	}
+
+	return classesContent.Items, nil
+}

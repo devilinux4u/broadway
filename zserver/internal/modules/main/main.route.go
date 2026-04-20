@@ -17,5 +17,8 @@ func RegisterRoutes(r *gin.RouterGroup) {
 
 		// Get specific section
 		main.GET("/section", controller.GetSectionContent)
+
+		// Get all classes
+		main.GET("/classes", controller.GetAllClasses)
 	}
 }

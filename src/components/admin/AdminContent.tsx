@@ -365,10 +365,12 @@ const AdminContent = () => {
                 <div className="sm:col-span-2"><label className={labelClass}>Title</label><input value={cls.title || ""} onChange={e => { const items = [...classes.items]; items[idx] = { ...items[idx], title: e.target.value }; setClasses({ ...classes, items }); }} className={inputClass} placeholder="Class Title" /></div>
                 <div><label className={labelClass}>Start Date</label><input type="date" value={cls.start_date || ""} onChange={e => { const items = [...classes.items]; items[idx] = { ...items[idx], start_date: e.target.value }; setClasses({ ...classes, items }); }} className={inputClass} /></div>
                 <div><label className={labelClass}>End Date</label><input type="date" value={cls.end_date || ""} onChange={e => { const items = [...classes.items]; items[idx] = { ...items[idx], end_date: e.target.value }; setClasses({ ...classes, items }); }} className={inputClass} /></div>
+                <div><label className={labelClass}>Start Time</label><input type="time" value={cls.start_time || ""} onChange={e => { const items = [...classes.items]; items[idx] = { ...items[idx], start_time: e.target.value }; setClasses({ ...classes, items }); }} className={inputClass} /></div>
+                <div><label className={labelClass}>End Time</label><input type="time" value={cls.end_time || ""} onChange={e => { const items = [...classes.items]; items[idx] = { ...items[idx], end_time: e.target.value }; setClasses({ ...classes, items }); }} className={inputClass} /></div>
               </div>
             </div>
           ))}
-          <button onClick={() => setClasses({ ...classes, items: [...(classes.items || []), { title: "", start_date: "", end_date: "" }] })} className="flex items-center gap-1 text-xs text-primary hover:underline">
+          <button onClick={() => setClasses({ ...classes, items: [...(classes.items || []), { title: "", start_date: "", end_date: "", start_time: "", end_time: "" }] })} className="flex items-center gap-1 text-xs text-primary hover:underline">
             <Plus size={12} /> Add Class
           </button>
           <button onClick={() => saveSection("classes", classes)} disabled={saving === "classes"} className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground text-sm font-medium rounded-sm hover:bg-primary/90 disabled:opacity-50">

@@ -15,6 +15,7 @@ import VerifyPayment from "./pages/VerifyPayment";
 import Admin from "./pages/Admin";
 import ResetPassword from "./pages/ResetPassword";
 import Shop from "./pages/Shop";
+import Classes from "./pages/Classes";
 import ProductDetail from "./pages/ProductDetail";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import NotFound from "./pages/NotFound";
@@ -34,6 +35,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/shop" element={<Shop />} />
+              <Route path="/classes" element={<Classes />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin/login" element={<AdminAuth />} />

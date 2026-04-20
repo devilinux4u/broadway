@@ -96,3 +96,29 @@ func (c *Controller) GetSectionContent(ctx *gin.Context) {
 		"content": content,
 	})
 }
+
+// GetAllClasses godoc
+// @Summary Get all classes
+// @Description Retrieve all classes with their schedule information
+// @Tags Main
+// @Produce json
+// @Success 200 {object} map[string]interface{}
+// @Failure 500 {object} ErrorResponse
+// @Router /api/main/classes [get]
+func (c *Controller) GetAllClasses(ctx *gin.Context) {
+	content, err := c.service.GetAllClasses()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ErrorResponse{
+			Success: false,
+			Message: "Failed to get classes",
+			Error:   err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "Classes retrieved successfully",
+		"classes": content,
+	})
+}

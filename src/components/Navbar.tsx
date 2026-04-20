@@ -96,7 +96,7 @@ const Navbar = ({ settings = {} }: NavbarProps) => {
 
             <div className="hidden md:flex items-end self-end gap-6 md:gap-8 pb-1">
               <button onClick={() => navigate("/shop")} className="text-sm font-medium tracking-wide text-foreground hover:text-primary transition-colors">Shop</button>
-              <button onClick={() => handleSectionNavigation("categories")} className="text-sm font-medium tracking-wide text-foreground hover:text-primary transition-colors">Categories</button>
+              <button onClick={() => navigate("/classes")} className="text-sm font-medium tracking-wide text-foreground hover:text-primary transition-colors">Classes</button>
               <button onClick={() => handleSectionNavigation("about")} className="text-sm font-medium tracking-wide text-foreground hover:text-primary transition-colors">About</button>
             </div>
           </div>
@@ -186,7 +186,7 @@ const Navbar = ({ settings = {} }: NavbarProps) => {
         <div className="md:hidden border-t border-border bg-background animate-fade-in">
           <div className="px-4 py-6 space-y-4">
             <button onClick={() => { setIsOpen(false); navigate("/shop"); }} className="block text-sm font-medium tracking-wide text-foreground hover:text-primary">Shop</button>
-            <button onClick={() => handleSectionNavigation("categories")} className="block text-sm font-medium tracking-wide text-foreground hover:text-primary">Categories</button>
+            <button onClick={() => { setIsOpen(false); navigate("/classes"); }} className="block text-sm font-medium tracking-wide text-foreground hover:text-primary">Classes</button>
             <button onClick={() => handleSectionNavigation("about")} className="block text-sm font-medium tracking-wide text-foreground hover:text-primary">About</button>
             <div className="flex items-center gap-3 pt-2 border-t border-border">
               {user ? (

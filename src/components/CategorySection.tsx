@@ -1,12 +1,14 @@
 import { getImageUrl } from "@/utils/imageUrl";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { Calendar } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface CategorySectionProps {
   data?: Record<string, any>;
 }
 
 const CategorySection = ({ data = {} }: CategorySectionProps) => {
+  const navigate = useNavigate();
   const catContent = data || {};
   const categories = Array.isArray(catContent.items) ? catContent.items : [];
   const featuredCategories = categories;
@@ -59,9 +61,17 @@ const CategorySection = ({ data = {} }: CategorySectionProps) => {
           <div className="relative min-h-[220px] md:min-h-[280px] bg-gradient-to-br from-primary/10 to-accent/10 rounded-sm overflow-hidden flex flex-col items-center justify-center p-6">
             {upcomingClasses.length > 0 ? (
               <div className="w-full h-full flex flex-col justify-between">
-                <div className="flex items-center justify-center gap-2 mb-4">
-                  <Calendar size={18} className="text-primary" />
-                  <h3 className="font-display text-lg md:text-xl font-semibold text-foreground">Upcoming Classes</h3>
+                <div className="flex items-center justify-between mb-4 gap-4">
+                  <div className="flex items-center gap-2">
+                    <Calendar size={18} className="text-primary" />
+                    <h3 className="font-display text-lg md:text-xl font-semibold text-foreground">Upcoming Classes</h3>
+                  </div>
+                  <button
+                    onClick={() => navigate("/classes")}
+                    className="ml-auto inline-flex items-center justify-center rounded-sm border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary hover:text-primary-foreground transition-colors whitespace-nowrap"
+                  >
+                    Learn More
+                  </button>
                 </div>
                 <div className="space-y-3 flex-1 overflow-y-auto">
                   {upcomingClasses.map((cls: any, idx: number) => {
