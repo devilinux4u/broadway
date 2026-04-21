@@ -120,20 +120,20 @@ const ProductCard = ({ name, id = "", priceNpr, originalPriceNpr, image, images,
         )}
 
         {/* Price and Add to Cart */}
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-base font-semibold text-foreground">
+            <span className="text-sm sm:text-base font-semibold text-foreground">
               Rs. {priceNpr.toLocaleString()}
             </span>
             {originalPriceNpr && (
-              <span className="text-xs text-muted-foreground line-through">
+              <span className="text-[10px] sm:text-xs text-muted-foreground line-through">
                 Rs. {originalPriceNpr.toLocaleString()}
               </span>
             )}
           </div>
           <button
             onClick={handleAddToCart}
-            className="px-6 py-2.5 bg-foreground text-background text-sm font-semibold rounded-full hover:bg-foreground/90 transition-colors whitespace-nowrap"
+            className="px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2.5 bg-foreground text-background text-xs sm:text-sm font-semibold rounded-full hover:bg-foreground/90 transition-colors whitespace-nowrap w-full sm:w-auto text-center"
           >
             Add to cart
           </button>

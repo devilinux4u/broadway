@@ -72,7 +72,7 @@ const Auth = () => {
   return (
     <>
       <Navbar settings={settings} />
-      <div className="bg-background flex flex-col items-center justify-start px-2 sm:px-4 py-4 sm:py-6 md:py-8 min-h-screen">
+      <div className="bg-background flex flex-col items-center justify-center px-2 sm:px-4 py-4 sm:py-6 md:py-8 min-h-[calc(100vh-80px)] sm:min-h-[calc(100vh-80px)] md:min-h-[calc(100vh-80px)]">
         <div className="w-full max-w-md">
         <div className="text-center mb-4 sm:mb-6 md:mb-8">
           {logoUrl && <img src={logoUrl} alt={storeName} className="h-14 sm:h-16 md:h-20 w-auto mx-auto mb-1.5 sm:mb-2" />}
