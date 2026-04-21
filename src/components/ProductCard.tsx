@@ -106,27 +106,30 @@ const ProductCard = ({ name, id = "", priceNpr, originalPriceNpr, image, images,
       <div className="h-px bg-border opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
       {/* Content Container */}
-      <div className="px-4 pb-6 pt-2">
+      <div className="px-4 pb-4 pt-2 flex flex-col min-h-[180px] sm:min-h-[200px]">
         {/* Product Name */}
-        <h3 className="font-archivo text-[15px] font-bold text-foreground mb-2 line-clamp-2">
+        <h3 className="font-archivo text-xs sm:text-sm md:text-[15px] font-bold text-foreground mb-2 line-clamp-2 flex-shrink-0">
           {name}
         </h3>
 
         {/* Description */}
         {description && (
-          <p className="text-xs text-muted-foreground mb-3 line-clamp-2">
+          <p className="text-[11px] sm:text-xs text-muted-foreground mb-3 line-clamp-2 flex-shrink-0">
             {description}
           </p>
         )}
 
+        {/* Spacer to push button to bottom */}
+        <div className="flex-1" />
+
         {/* Price and Add to Cart */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 flex-shrink-0">
           <div className="flex items-center gap-2">
-            <span className="text-sm sm:text-base font-semibold text-foreground">
+            <span className="text-xs sm:text-sm md:text-base font-semibold text-foreground">
               Rs. {priceNpr.toLocaleString()}
             </span>
             {originalPriceNpr && (
-              <span className="text-[10px] sm:text-xs text-muted-foreground line-through">
+              <span className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground line-through">
                 Rs. {originalPriceNpr.toLocaleString()}
               </span>
             )}
