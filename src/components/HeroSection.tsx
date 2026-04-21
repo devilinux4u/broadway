@@ -43,18 +43,18 @@ const HeroSection = ({ data = {} }: HeroSectionProps) => {
           <p className="text-sm tracking-[0.3em] uppercase text-rose-light mb-4 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
             {tagline}
           </p>
-          <h1 className="font-display text-5xl md:text-7xl font-bold leading-[1.1] mb-6 text-primary-foreground animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold leading-[1.1] mb-6 text-primary-foreground animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
             {title}
             <span className="italic block text-rose-light">{titleAccent}</span>
           </h1>
-          <p className="text-lg text-primary-foreground/80 mb-8 max-w-md leading-relaxed animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+          <p className="text-sm sm:text-base md:text-lg text-primary-foreground/80 mb-8 max-w-md leading-relaxed animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
             {description}
           </p>
-          <div className="flex flex-wrap gap-4 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
-            <a href="#products" className="inline-flex items-center px-8 py-3.5 bg-primary text-primary-foreground font-medium text-sm tracking-wide rounded-sm hover:bg-primary/90 transition-all duration-300 hover:shadow-lg">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
+            <a href="#products" className="inline-flex items-center justify-center sm:justify-start px-4 sm:px-8 py-3 sm:py-3.5 bg-primary text-primary-foreground font-medium text-xs sm:text-sm tracking-wide rounded-sm hover:bg-primary/90 transition-all duration-300 hover:shadow-lg">
               {ctaText}
             </a>
-            <a href="#categories" className="inline-flex items-center px-8 py-3.5 border border-primary-foreground/30 text-primary-foreground font-medium text-sm tracking-wide rounded-sm hover:bg-primary-foreground/10 transition-all duration-300">
+            <a href="#categories" className="inline-flex items-center justify-center sm:justify-start px-4 sm:px-8 py-3 sm:py-3.5 border border-primary-foreground/30 text-primary-foreground font-medium text-xs sm:text-sm tracking-wide rounded-sm hover:bg-primary-foreground/10 transition-all duration-300">
               {cta2Text}
             </a>
           </div>

@@ -21,23 +21,23 @@ const AboutBanner = ({ data = {} }: AboutBannerProps) => {
   return (
     <section id="about" className="py-12 md:py-16 bg-rose-light">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <p className="text-sm tracking-[0.3em] uppercase text-primary mb-3">{tagline}</p>
-          <h2 className="font-display text-4xl md:text-5xl font-semibold text-foreground mb-4">{title}</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">{description}</p>
+        <div className="text-center mb-8 sm:mb-12 md:mb-16">
+          <p className="text-xs sm:text-sm tracking-[0.3em] uppercase text-primary mb-2 sm:mb-3">{tagline}</p>
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground mb-3 sm:mb-4">{title}</h2>
+          <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">{description}</p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {features.map((f: any, i: number) => {
             const Icon = iconMap[f.icon];
             if (!Icon) return null;
 
             return (
-              <div key={f.title + i} className="text-center p-6 rounded-sm bg-card/60 backdrop-blur-sm animate-fade-in-up" style={{ animationDelay: `${i * 0.1}s` }}>
-                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Icon size={22} className="text-primary" />
+              <div key={f.title + i} className="text-center p-4 sm:p-5 md:p-6 rounded-sm bg-card/60 backdrop-blur-sm animate-fade-in-up" style={{ animationDelay: `${i * 0.1}s` }}>
+                <div className="w-10 sm:w-12 h-10 sm:h-12 mx-auto mb-3 sm:mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Icon size={18} className="text-primary sm:w-auto" />
                 </div>
-                <h3 className="font-display text-lg font-semibold text-foreground mb-2">{f.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
+                <h3 className="font-display text-base sm:text-lg font-semibold text-foreground mb-2">{f.title}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
                 {f.link && (
                   <a href={f.link} target="_blank" rel="noopener noreferrer" className="inline-block mt-3 text-xs font-medium text-primary hover:text-primary/80 underline underline-offset-2">
                     Verify on PETA →

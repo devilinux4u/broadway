@@ -155,46 +155,46 @@ const Classes = () => {
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Navbar settings={settingsData} />
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-2 sm:px-4 py-6 sm:py-8 pb-20 md:pb-0">
         {/* Header */}
-        <div className="mb-8">
-          
-          <p className="text-foreground/70">View our classes and their schedules</p>
+        <div className="mb-6 sm:mb-8">
+          <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2 sm:mb-3">Classes</h1>
+          <p className="text-sm sm:text-base text-foreground/70">View our classes and their schedules</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[28rem_minmax(0,1fr)] gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[22rem_minmax(0,1fr)] gap-4 sm:gap-6 lg:gap-8">
           {/* Ongoing and Upcoming Classes */}
           <div>
-            <div className="bg-card border border-border rounded-lg p-4 shadow-md sticky top-28 space-y-6">
+            <div className="bg-card border border-border rounded-lg p-3 sm:p-4 shadow-md sticky top-20 sm:top-24 space-y-4 sm:space-y-6">
               {visibleClasses.length > 0 && (
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-display text-base font-semibold text-foreground">Classes</h3>
+                  <div className="flex items-center justify-between mb-2 sm:mb-3">
+                    <h3 className="font-display text-sm sm:text-base font-semibold text-foreground">Classes</h3>
                     <span className="bg-primary text-white text-xs font-semibold px-2 py-1 rounded whitespace-nowrap h-fit">
                       {visibleClasses.length}
                     </span>
                   </div>
-                  <div className="space-y-3">
+                  <div className="space-y-2 sm:space-y-3">
                     {visibleClasses.map((cls, idx) => {
                       const startDate = parseISO(cls.start_date);
                       const endDate = parseISO(cls.end_date);
                       return (
                         <div
                           key={`${cls.title}-${cls.start_date}-${idx}`}
-                          className="p-3 md:p-4 rounded-sm border-2 bg-primary/10 border-primary/30 hover:border-primary/50 hover:shadow-md transition-all flex gap-3 items-center justify-between"
+                          className="p-2 sm:p-3 md:p-4 rounded-sm border-2 bg-primary/10 border-primary/30 hover:border-primary/50 hover:shadow-md transition-all flex gap-2 sm:gap-3 items-center justify-between text-xs sm:text-sm"
                         >
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-sm mb-1 line-clamp-2 text-foreground">{cls.title}</h4>
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-semibold mb-0.5 sm:mb-1 line-clamp-2 text-foreground">{cls.title}</h4>
+                            <div className="flex items-center gap-1 text-[10px] sm:text-xs text-muted-foreground">
                               <span className="font-medium">{format(startDate, "MMM dd")}</span>
                               <span>→</span>
                               <span className="font-medium">{format(endDate, "MMM dd")}</span>
                             </div>
-                            <p className="text-xs text-muted-foreground mt-1 font-medium">
+                            <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1 font-medium">
                               {cls.start_time} - {cls.end_time}
                             </p>
                           </div>
-                          <span className={`${cls.statusClass} text-white text-xs font-semibold px-2 py-1 rounded whitespace-nowrap h-fit`}>
+                          <span className={`${cls.statusClass} text-white text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded whitespace-nowrap h-fit`}>
                             {cls.status}
                           </span>
                         </div>
@@ -206,8 +206,8 @@ const Classes = () => {
 
               {visibleClasses.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-full text-center gap-2 py-6">
-                  <p className="text-sm text-muted-foreground font-medium">No classes scheduled</p>
-                  <p className="text-xs text-muted-foreground/60">Check back soon for upcoming classes</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground font-medium">No classes scheduled</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground/60">Check back soon for upcoming classes</p>
                 </div>
               )}
             </div>

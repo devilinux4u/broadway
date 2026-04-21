@@ -39,13 +39,13 @@ const Rewards = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="pt-24 pb-20">
-        <div className="container mx-auto px-4 max-w-2xl">
-          <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-8 flex items-center gap-3">
-            <Gift className="text-primary" /> My Rewards
+      <main className="pt-16 sm:pt-20 md:pt-24 pb-20 md:pb-0">
+        <div className="container mx-auto px-2 sm:px-4 max-w-2xl">
+          <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-6 sm:mb-8 flex items-center gap-2 sm:gap-3">
+            <Gift className="text-primary w-6 h-6 sm:w-8 sm:h-8" /> My Rewards
           </h1>
 
-          <div className="bg-secondary rounded-sm p-4 mb-6 text-sm text-muted-foreground">
+          <div className="bg-secondary rounded-sm p-3 sm:p-4 mb-4 sm:mb-6 text-xs sm:text-sm text-muted-foreground">
             Rewards are being migrated to the Go backend. Data will appear here once the backend rewards module is enabled.
           </div>
 
@@ -58,28 +58,28 @@ const Rewards = () => {
           />
 
           {/* Points Summary */}
-          <div className="grid grid-cols-3 gap-4 mb-10">
-            <div className="bg-secondary rounded-sm p-5 text-center">
-              <Star className="w-6 h-6 text-primary mx-auto mb-2" />
-              <p className="text-2xl font-bold text-foreground">{rewards?.points ?? 0}</p>
-              <p className="text-xs text-muted-foreground mt-1">Available Points</p>
+          <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 mb-6 sm:mb-8 md:mb-10">
+            <div className="bg-secondary rounded-sm p-3 sm:p-4 md:p-5 text-center">
+              <Star className="w-5 h-5 sm:w-6 sm:h-6 text-primary mx-auto mb-1.5 sm:mb-2" />
+              <p className="text-xl sm:text-2xl font-bold text-foreground">{rewards?.points ?? 0}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">Available Points</p>
             </div>
-            <div className="bg-secondary rounded-sm p-5 text-center">
-              <ArrowUpRight className="w-6 h-6 text-green-500 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-foreground">{rewards?.total_earned ?? 0}</p>
-              <p className="text-xs text-muted-foreground mt-1">Total Earned</p>
+            <div className="bg-secondary rounded-sm p-3 sm:p-4 md:p-5 text-center">
+              <ArrowUpRight className="w-5 h-5 sm:w-6 sm:h-6 text-green-500 mx-auto mb-1.5 sm:mb-2" />
+              <p className="text-xl sm:text-2xl font-bold text-foreground">{rewards?.total_earned ?? 0}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">Total Earned</p>
             </div>
-            <div className="bg-secondary rounded-sm p-5 text-center">
-              <ArrowDownRight className="w-6 h-6 text-accent mx-auto mb-2" />
-              <p className="text-2xl font-bold text-foreground">{rewards?.total_redeemed ?? 0}</p>
-              <p className="text-xs text-muted-foreground mt-1">Redeemed</p>
+            <div className="bg-secondary rounded-sm p-3 sm:p-4 md:p-5 text-center">
+              <ArrowDownRight className="w-5 h-5 sm:w-6 sm:h-6 text-accent mx-auto mb-1.5 sm:mb-2" />
+              <p className="text-xl sm:text-2xl font-bold text-foreground">{rewards?.total_redeemed ?? 0}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">Redeemed</p>
             </div>
           </div>
 
           {/* How it works */}
-          <div className="bg-secondary rounded-sm p-6 mb-10">
-            <h2 className="font-display text-lg font-semibold text-foreground mb-3">How Rewards Work</h2>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+          <div className="bg-secondary rounded-sm p-4 sm:p-5 md:p-6 mb-6 sm:mb-8 md:mb-10">
+            <h2 className="font-display text-base sm:text-lg font-semibold text-foreground mb-2 sm:mb-3">How Rewards Work</h2>
+            <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
               <li>• Earn <strong className="text-foreground">1 point</strong> for every Rs. 100 spent</li>
               <li>• <strong className="text-foreground">100 points</strong> = Rs. 50 discount</li>
               <li>• Points never expire as long as your account is active</li>

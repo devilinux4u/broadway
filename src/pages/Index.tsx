@@ -14,10 +14,10 @@ const Index = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background pb-20 md:pb-0 flex items-center justify-center">
+      <div className="min-h-screen bg-background pb-20 md:pb-0 flex items-center justify-center px-2 sm:px-4">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-          <p className="mt-4 text-foreground/60">Loading page content...</p>
+          <div className="inline-block animate-spin rounded-full h-8 sm:h-10 md:h-12 w-8 sm:w-10 md:w-12 border-b-2 border-primary"></div>
+          <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-foreground/60">Loading page content...</p>
         </div>
       </div>
     );

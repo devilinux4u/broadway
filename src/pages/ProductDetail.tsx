@@ -151,28 +151,28 @@ const ProductDetail = () => {
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Navbar settings={settings} />
-      <main className="pt-7 md:pt-19">
-        <div className="container mx-auto px-4">
+      <main className="pt-6 sm:pt-8 md:pt-14">
+        <div className="container mx-auto px-2 sm:px-4">
           {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-            <button onClick={() => navigate("/")} className="hover:text-primary transition-colors">Home</button>
-            <span>/</span>
-            <button onClick={() => navigate("/shop")} className="hover:text-primary transition-colors">Shop</button>
-            <span>/</span>
-            <span className="text-foreground">{product.name}</span>
+          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6 overflow-x-auto">
+            <button onClick={() => navigate("/")} className="hover:text-primary transition-colors whitespace-nowrap">Home</button>
+            <span className="text-muted-foreground/50">/</span>
+            <button onClick={() => navigate("/shop")} className="hover:text-primary transition-colors whitespace-nowrap">Shop</button>
+            <span className="text-muted-foreground/50">/</span>
+            <span className="text-foreground line-clamp-1">{product.name}</span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-14">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-14">
             {/* Image Gallery */}
-            <div className="flex gap-4">
+            <div className="flex gap-2 sm:gap-4">
               {/* Thumbnails */}
               {images.length > 1 && (
-                <div className="flex flex-col gap-2 w-16 flex-shrink-0">
+                <div className="flex flex-col gap-1.5 sm:gap-2 w-12 sm:w-16 flex-shrink-0">
                   {images.map((img, idx) => (
                     <button
                       key={idx}
                       onClick={() => setCurrentImage(idx)}
-                      className={`w-full h-16 rounded-sm overflow-hidden border-2 transition-all flex-shrink-0 ${
+                      className={`w-full h-12 sm:h-16 rounded-sm overflow-hidden border-2 transition-all flex-shrink-0 ${
                         idx === currentImage ? "border-primary" : "border-border"
                       }`}
                     >
@@ -182,7 +182,7 @@ const ProductDetail = () => {
                 </div>
               )}
               <div className="flex-1">
-                <div className="relative w-full aspect-square max-h-[600px] md:max-h-[700px] overflow-hidden rounded-sm">
+                <div className="relative w-full aspect-square max-h-[400px] sm:max-h-[600px] md:max-h-[700px] overflow-hidden rounded-sm">
                 {images.length > 0 ? (
                   <img
                     src={images[currentImage]}
@@ -190,29 +190,29 @@ const ProductDetail = () => {
                     className="w-full h-full object-contain"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">No image</div>
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">No image</div>
                 )}
                 {product.badge && (
-                  <Badge className="absolute top-4 left-4 bg-primary text-primary-foreground">{product.badge}</Badge>
+                  <Badge className="absolute top-2 sm:top-4 left-2 sm:left-4 bg-primary text-primary-foreground text-xs">{product.badge}</Badge>
                 )}
               </div>
             </div>
             </div>
 
             {/* Product Info */}
-            <div className="space-y-6 pb-20 md:pb-24">
+            <div className="space-y-4 sm:space-y-6 pb-20 md:pb-24">
               <div>
-                <p className="text-xs tracking-[0.3em] uppercase text-muted-foreground mb-2">{product.category}</p>
-                <h1 className="font-archivo text-2xl md:text-3xl font-semibold text-foreground mb-3">{product.name}</h1>
-                <div className="flex items-center gap-5">
-                  <span className="text-xl font-bold text-foreground">Rs. {product.price_npr.toLocaleString()}</span>
+                <p className="text-xs tracking-[0.3em] uppercase text-muted-foreground mb-1.5 sm:mb-2">{product.category}</p>
+                <h1 className="font-archivo text-xl sm:text-2xl md:text-3xl font-semibold text-foreground mb-2 sm:mb-3">{product.name}</h1>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-5">
+                  <span className="text-lg sm:text-xl font-bold text-foreground">Rs. {product.price_npr.toLocaleString()}</span>
                   {(product.in_stock === true || product.in_stock === 1 || product.stock_quantity > 0) ? (
-                    <span className="text-sm font-medium text-primary flex items-center gap-1.5">
+                    <span className="text-xs sm:text-sm font-medium text-primary flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded-full bg-primary" />
                       In Stock {product.stock_quantity ? `(${product.stock_quantity})` : ""}
                     </span>
                   ) : (
-                    <span className="text-sm font-medium text-destructive flex items-center gap-1.5">
+                    <span className="text-xs sm:text-sm font-medium text-destructive flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded-full bg-destructive" />
                       Out of Stock
                     </span>
@@ -224,13 +224,13 @@ const ProductDetail = () => {
                 <div>
                   {!expandedDescription ? (
                     <div>
-                      <p className="text-muted-foreground leading-relaxed line-clamp-5">
+                      <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed line-clamp-5">
                         {product.description}
                       </p>
                       {(product.description.split('\n').length > 5 || product.description.length > 250) && (
                         <button
                           onClick={() => setExpandedDescription(true)}
-                          className="ml-0 text-primary hover:text-primary/80 transition-colors font-medium text-sm mt-1"
+                          className="ml-0 text-primary hover:text-primary/80 transition-colors font-medium text-xs sm:text-sm mt-1"
                         >
                           See more
                         </button>
@@ -238,11 +238,11 @@ const ProductDetail = () => {
                     </div>
                   ) : (
                     <div>
-                      <p className="text-muted-foreground leading-relaxed">{product.description}</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{product.description}</p>
                       {(product.description.split('\n').length > 5 || product.description.length > 250) && (
                         <button
                           onClick={() => setExpandedDescription(false)}
-                          className="text-sm font-medium text-primary hover:text-primary/80 transition-colors mt-2"
+                          className="text-xs sm:text-sm font-medium text-primary hover:text-primary/80 transition-colors mt-2"
                         >
                           See less
                         </button>

@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import { ordersAPI } from "@/services/ordersAPI";
+import { shopAPI } from "@/services/shopAPI";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -35,6 +36,57 @@ const Checkout = () => {
   const vatAmount = Math.round(totalPrice * vatRate);
   const grandTotal = totalPrice + vatAmount;
 
+  useEffect(() => {
+    let active = true;
+
+    const validateStockBeforeEntry = async () => {
+      if (!user || orderPlaced || items.length === 0) {
+        return;
+      }
+
+      try {
+        const checks = await Promise.all(
+          items.map(async (item) => {
+            const response = await shopAPI.getProductByID(item.product_id);
+            const product = response?.product;
+            if (!response?.success || !product) {
+              return item.product_name;
+            }
+
+            const inStock = product.in_stock !== false;
+            if (!inStock || product.stock_quantity < item.quantity) {
+              return item.product_name;
+            }
+
+            return null;
+          }),
+        );
+
+        if (!active) {
+          return;
+        }
+
+        const outOfStockItems = checks.filter((name): name is string => Boolean(name));
+
+        if (outOfStockItems.length > 0) {
+          toast({
+            title: "Some items are out of stock",
+            description: `${outOfStockItems.join(", ")} is currently unavailable. Update your cart before checkout.`,
+            variant: "destructive",
+          });
+          navigate("/shop");
+        }
+      } catch (error) {
+        console.error("Failed to validate stock on checkout page:", error);
+      }
+    };
+
+    validateStockBeforeEntry();
+    return () => {
+      active = false;
+    };
+  }, [items, navigate, orderPlaced, user]);
+
   const handlePlaceOrder = async () => {
     if (!selectedPayment) { 
       toast({ title: "Select payment method" }); 
@@ -49,7 +101,7 @@ const Checkout = () => {
     try {
       // Convert cart items to checkout items
       const checkoutItems = items.map(item => ({
-        product_id: item.id,
+        product_id: item.product_id,
         product_name: item.product_name,
         product_image: item.product_image,
         quantity: item.quantity,
@@ -116,49 +168,49 @@ const Checkout = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar settings={settings} />
-      <main className="pt-10 md:pt-14 pb-20">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
+      <main className="pt-6 sm:pt-10 md:pt-14 pb-20">
+        <div className="container mx-auto px-2 sm:px-4 max-w-4xl">
+          <button onClick={() => navigate(-1)} className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-muted-foreground hover:text-foreground mb-4 sm:mb-6">
             <ArrowLeft size={16} /> Back
           </button>
 
-          <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-8">Checkout</h1>
+          <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-6 sm:mb-8">Checkout</h1>
 
-          <div className="grid md:grid-cols-5 gap-8">
-            <div className="md:col-span-3 space-y-8">
+          <div className="grid md:grid-cols-5 gap-6 md:gap-8">
+            <div className="md:col-span-3 space-y-6 sm:space-y-8">
               <div>
-                <h2 className="font-display text-xl font-semibold text-foreground mb-4">Shipping Details</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <input placeholder="Full Name *" value={shipping.name} onChange={(e) => setShipping({ ...shipping, name: e.target.value })} className="w-full px-4 py-3 border border-input rounded-sm bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
-                  <input placeholder="Phone Number *" value={shipping.phone} onChange={(e) => setShipping({ ...shipping, phone: e.target.value })} className="w-full px-4 py-3 border border-input rounded-sm bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
-                  <input placeholder="Address *" value={shipping.address} onChange={(e) => setShipping({ ...shipping, address: e.target.value })} className="col-span-full w-full px-4 py-3 border border-input rounded-sm bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
-                  <input placeholder="City *" value={shipping.city} onChange={(e) => setShipping({ ...shipping, city: e.target.value })} className="w-full px-4 py-3 border border-input rounded-sm bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
-                  <input placeholder="Notes (optional)" value={shipping.notes} onChange={(e) => setShipping({ ...shipping, notes: e.target.value })} className="w-full px-4 py-3 border border-input rounded-sm bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+                <h2 className="font-display text-lg sm:text-xl font-semibold text-foreground mb-3 sm:mb-4">Shipping Details</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  <input placeholder="Full Name *" value={shipping.name} onChange={(e) => setShipping({ ...shipping, name: e.target.value })} className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-input rounded-sm bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+                  <input placeholder="Phone Number *" value={shipping.phone} onChange={(e) => setShipping({ ...shipping, phone: e.target.value })} className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-input rounded-sm bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+                  <input placeholder="Address *" value={shipping.address} onChange={(e) => setShipping({ ...shipping, address: e.target.value })} className="col-span-full w-full px-3 sm:px-4 py-2 sm:py-3 border border-input rounded-sm bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+                  <input placeholder="City *" value={shipping.city} onChange={(e) => setShipping({ ...shipping, city: e.target.value })} className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-input rounded-sm bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+                  <input placeholder="Notes (optional)" value={shipping.notes} onChange={(e) => setShipping({ ...shipping, notes: e.target.value })} className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-input rounded-sm bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
                 </div>
               </div>
 
               <div>
-                <h2 className="font-display text-xl font-semibold text-foreground mb-4">Payment Method</h2>
-                <div className="space-y-3">
+                <h2 className="font-display text-lg sm:text-xl font-semibold text-foreground mb-3 sm:mb-4">Payment Method</h2>
+                <div className="space-y-2 sm:space-y-3">
                   {paymentMethods.map((method) => (
                     <button
                       key={method.id}
                       onClick={() => setSelectedPayment(method.id)}
-                      className={`w-full flex items-center gap-4 p-4 rounded-sm border transition-all ${
+                      className={`w-full flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-sm border transition-all text-left ${
                         selectedPayment === method.id
                           ? "border-primary bg-secondary ring-2 ring-primary/20"
                           : "border-input hover:border-primary/50"
                       }`}
                     >
-                      <div className={`w-10 h-10 rounded-full ${method.color} flex items-center justify-center`}>
-                        <method.icon size={18} className="text-white" />
+                      <div className={`w-8 sm:w-10 h-8 sm:h-10 rounded-full ${method.color} flex-shrink-0 flex items-center justify-center`}>
+                        <method.icon size={16} className="text-white sm:w-auto" />
                       </div>
-                      <div className="text-left">
-                        <p className="text-sm font-medium text-foreground">{method.name}</p>
-                        <p className="text-xs text-muted-foreground">{method.description}</p>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs sm:text-sm font-medium text-foreground">{method.name}</p>
+                        <p className="text-[10px] sm:text-xs text-muted-foreground line-clamp-1">{method.description}</p>
                       </div>
                       {selectedPayment === method.id && (
-                        <CheckCircle2 size={20} className="ml-auto text-primary" />
+                        <CheckCircle2 size={18} className="ml-auto text-primary flex-shrink-0" />
                       )}
                     </button>
                   ))}
@@ -167,9 +219,9 @@ const Checkout = () => {
             </div>
 
             <div className="md:col-span-2">
-              <div className="bg-secondary rounded-sm p-6 sticky top-24">
-                <h2 className="font-display text-lg font-semibold text-foreground mb-4">Order Summary</h2>
-                <div className="space-y-3 mb-4">
+              <div className="bg-secondary rounded-sm p-4 sm:p-6 sticky top-20 md:top-24">
+                <h2 className="font-display text-lg sm:text-base font-semibold text-foreground mb-3 sm:mb-4">Order Summary</h2>
+                <div className="space-y-2 sm:space-y-3 mb-3 sm:mb-4">
                   {items.map((item, idx) => (
                     <div key={`${item.product_name}-${item.color || ""}-${idx}`} className="flex justify-between items-start text-sm gap-2">
                       <div className="text-foreground flex-1">

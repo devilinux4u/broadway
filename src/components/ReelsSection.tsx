@@ -104,9 +104,9 @@ const ReelsSection = ({ data = {} }: ReelsSectionProps) => {
   return (
     <section id="reels" className="py-12 md:py-16 bg-[#e8e8e8]">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-6 md:mb-8">
-          <p className="text-sm tracking-[0.3em] uppercase text-primary mb-3">Watch & Shop</p>
-          <h2 className="font-display text-4xl md:text-5xl font-semibold text-foreground">Reels</h2>
+        <div className="text-center mb-4 sm:mb-6 md:mb-8">
+          <p className="text-xs sm:text-sm tracking-[0.3em] uppercase text-primary mb-2 sm:mb-3">Watch & Shop</p>
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground">Reels</h2>
         </div>
 
         <div className="overflow-x-hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden" ref={containerRef}>

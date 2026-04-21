@@ -89,43 +89,43 @@ const MyOrders = () => {
     const currentStep = getStatusStep(selectedOrder.status);
 
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background pb-20 md:pb-0">
         <Navbar settings={settings} />
-        <main className="pt-20 pb-28 md:pb-20">
-          <div className="container mx-auto px-4 max-w-2xl">
-            <button onClick={() => setSelectedOrder(null)} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 mt-2">
-              <ArrowLeft size={16} /> Back to Orders
+        <main className="pt-16 sm:pt-20 md:pt-20 pb-28 md:pb-20">
+          <div className="container mx-auto px-2 sm:px-4 max-w-2xl">
+            <button onClick={() => setSelectedOrder(null)} className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-muted-foreground hover:text-foreground mb-3 sm:mb-4 mt-1 sm:mt-2">
+              <ArrowLeft size={14} className="sm:w-4 sm:h-4" /> Back to Orders
             </button>
 
-            <div className="bg-card border border-border rounded-lg p-5 mb-4">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="font-display text-lg font-semibold text-foreground">Order #{selectedOrder.id.slice(0, 8)}</h2>
-                <span className={`flex items-center gap-1 text-sm font-medium ${status.color}`}>
-                  <StatusIcon size={16} /> {status.label}
+            <div className="bg-card border border-border rounded-lg p-3 sm:p-4 md:p-5 mb-3 sm:mb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2 sm:mb-3">
+                <h2 className="font-display text-base sm:text-lg font-semibold text-foreground">Order #{selectedOrder.id.slice(0, 8)}</h2>
+                <span className={`flex items-center gap-1 text-xs sm:text-sm font-medium w-fit ${status.color}`}>
+                  <StatusIcon size={14} className="sm:w-4 sm:h-4" /> {status.label}
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-[10px] sm:text-xs text-muted-foreground">
                 {new Date(selectedOrder.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" })}
               </p>
             </div>
 
             {/* Status Timeline */}
             {selectedOrder.status !== "cancelled" && (
-              <div className="bg-card border border-border rounded-lg p-5 mb-4">
-                <h3 className="text-sm font-semibold text-foreground mb-4">Order Progress</h3>
-                <div className="flex items-center justify-between relative">
-                  <div className="absolute top-3 left-6 right-6 h-0.5 bg-border" />
-                  <div className="absolute top-3 left-6 h-0.5 bg-primary transition-all" style={{ width: `${(currentStep / (statusSteps.length - 1)) * 100}%`, maxWidth: "calc(100% - 48px)" }} />
+              <div className="bg-card border border-border rounded-lg p-3 sm:p-4 md:p-5 mb-3 sm:mb-4">
+                <h3 className="text-xs sm:text-sm font-semibold text-foreground mb-3 sm:mb-4">Order Progress</h3>
+                <div className="flex items-center justify-between relative gap-1 sm:gap-0">
+                  <div className="absolute top-2 sm:top-3 left-3 sm:left-6 right-3 sm:right-6 h-0.5 bg-border" />
+                  <div className="absolute top-2 sm:top-3 left-3 sm:left-6 h-0.5 bg-primary transition-all" style={{ width: `${(currentStep / (statusSteps.length - 1)) * 100}%`, maxWidth: "calc(100% - 24px)" }} />
                   {statusSteps.map((step, idx) => {
                     const stepConf = statusConfig[step];
                     const StepIcon = stepConf.icon;
                     const isActive = idx <= currentStep;
                     return (
                       <div key={step} className="flex flex-col items-center z-10 relative">
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center ${isActive ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
-                          <StepIcon size={12} />
+                        <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center ${isActive ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
+                          <StepIcon size={10} className="sm:w-3 sm:h-3" />
                         </div>
-                        <span className={`text-[10px] mt-1.5 ${isActive ? "text-foreground font-medium" : "text-muted-foreground"}`}>
+                        <span className={`text-[8px] sm:text-[10px] mt-1 sm:mt-1.5 text-center leading-tight ${isActive ? "text-foreground font-medium" : "text-muted-foreground"}`}>
                           {stepConf.label}
                         </span>
                       </div>
@@ -136,34 +136,34 @@ const MyOrders = () => {
             )}
 
             {/* Items */}
-            <div className="bg-card border border-border rounded-lg p-5 mb-4">
-              <h3 className="text-sm font-semibold text-foreground mb-3">Items</h3>
-              <div className="space-y-3">
+            <div className="bg-card border border-border rounded-lg p-3 sm:p-4 md:p-5 mb-3 sm:mb-4">
+              <h3 className="text-xs sm:text-sm font-semibold text-foreground mb-2 sm:mb-3">Items</h3>
+              <div className="space-y-2 sm:space-y-3">
                 {orderItems.map((item) => (
-                  <div key={item.id} className="flex gap-3">
-                    <img src={item.product_image} alt={item.product_name} className="w-14 h-14 object-cover rounded-sm" />
+                  <div key={item.id} className="flex gap-2 sm:gap-3">
+                    <img src={item.product_image} alt={item.product_name} className="w-12 h-12 sm:w-14 sm:h-14 object-cover rounded-sm flex-shrink-0" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate">{item.product_name}</p>
-                      {item.color && <p className="text-xs text-muted-foreground">Color: {item.color}</p>}
-                      <p className="text-xs text-muted-foreground">Qty: {item.quantity}</p>
+                      <p className="text-xs sm:text-sm font-medium text-foreground truncate">{item.product_name}</p>
+                      {item.color && <p className="text-[10px] sm:text-xs text-muted-foreground">Color: {item.color}</p>}
+                      <p className="text-[10px] sm:text-xs text-muted-foreground">Qty: {item.quantity}</p>
                     </div>
-                    <p className="text-sm font-semibold text-foreground">Rs. {(item.price * item.quantity).toLocaleString()}</p>
+                    <p className="text-xs sm:text-sm font-semibold text-foreground whitespace-nowrap flex-shrink-0">Rs. {(item.price * item.quantity).toLocaleString()}</p>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Summary */}
-            <div className="bg-card border border-border rounded-lg p-5">
-              <div className="flex justify-between text-sm mb-2">
+            <div className="bg-card border border-border rounded-lg p-3 sm:p-4 md:p-5">
+              <div className="flex justify-between text-xs sm:text-sm mb-1.5 sm:mb-2">
                 <span className="text-muted-foreground">Payment</span>
-                <span className="text-foreground capitalize">{selectedOrder.payment_method.replace("_", " ")}</span>
+                <span className="text-foreground capitalize text-right">{selectedOrder.payment_method.replace("_", " ")}</span>
               </div>
-              <div className="flex justify-between text-sm mb-2">
+              <div className="flex justify-between text-xs sm:text-sm mb-1.5 sm:mb-2">
                 <span className="text-muted-foreground">Delivery to</span>
-                <span className="text-foreground">{selectedOrder.shipping_city}</span>
+                <span className="text-foreground text-right">{selectedOrder.shipping_city}</span>
               </div>
-              <div className="border-t border-border pt-3 mt-3 flex justify-between font-semibold text-foreground">
+              <div className="border-t border-border pt-2 sm:pt-3 mt-2 sm:mt-3 flex justify-between font-semibold text-sm sm:text-base text-foreground">
                 <span>Total</span>
                 <span>Rs. {selectedOrder.total_amount.toLocaleString()}</span>
               </div>
@@ -177,24 +177,24 @@ const MyOrders = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Navbar settings={settings} />
-      <main className="pt-20 pb-28 md:pb-20">
-        <div className="container mx-auto px-4 max-w-2xl">
-          <h1 className="font-display text-2xl md:text-3xl font-bold text-foreground mt-4 mb-6">My Orders</h1>
+      <main className="pt-16 sm:pt-20 md:pt-20 pb-28 md:pb-20">
+        <div className="container mx-auto px-2 sm:px-4 max-w-2xl">
+          <h1 className="font-display text-2xl sm:text-3xl md:text-3xl font-bold text-foreground mt-2 sm:mt-4 mb-4 sm:mb-6">My Orders</h1>
 
           {loading ? (
-            <div className="text-center py-16 text-muted-foreground">Loading...</div>
+            <div className="text-center py-12 sm:py-16 text-muted-foreground text-sm">Loading...</div>
           ) : orders.length === 0 ? (
-            <div className="text-center py-16">
-              <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground mb-4">No orders yet</p>
-              <button onClick={() => navigate("/")} className="px-6 py-2.5 bg-primary text-primary-foreground text-sm font-medium rounded-sm hover:bg-primary/90">
+            <div className="text-center py-12 sm:py-16">
+              <Package className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground mx-auto mb-3 sm:mb-4" />
+              <p className="text-muted-foreground mb-3 sm:mb-4 text-sm">No orders yet</p>
+              <button onClick={() => navigate("/")} className="px-4 sm:px-6 py-2 sm:py-2.5 bg-primary text-primary-foreground text-xs sm:text-sm font-medium rounded-sm hover:bg-primary/90">
                 Start Shopping
               </button>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {orders.map((order) => {
                 const status = statusConfig[order.status] || statusConfig.pending;
                 const StatusIcon = status.icon;
@@ -202,20 +202,20 @@ const MyOrders = () => {
                   <button
                     key={order.id}
                     onClick={() => viewOrder(order)}
-                    className="w-full flex items-center gap-4 p-4 bg-card border border-border rounded-lg hover:border-primary/30 transition-all text-left"
+                    className="w-full flex items-center gap-2 sm:gap-4 p-2.5 sm:p-3 md:p-4 bg-card border border-border rounded-lg hover:border-primary/30 transition-all text-left"
                   >
-                    <div className={`w-10 h-10 rounded-full bg-secondary flex items-center justify-center ${status.color}`}>
-                      <StatusIcon size={18} />
+                    <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-secondary flex-shrink-0 flex items-center justify-center ${status.color}`}>
+                      <StatusIcon size={14} className="sm:w-5 sm:h-5" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground">Order #{order.id.slice(0, 8)}</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs sm:text-sm font-medium text-foreground">Order #{order.id.slice(0, 8)}</p>
+                      <p className="text-[10px] sm:text-xs text-muted-foreground">
                         {new Date(order.created_at).toLocaleDateString()} · Rs. {order.total_amount.toLocaleString()}
                       </p>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <span className={`text-xs font-medium ${status.color}`}>{status.label}</span>
-                      <ChevronRight size={16} className="text-muted-foreground" />
+                    <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
+                      <span className={`text-[10px] sm:text-xs font-medium ${status.color}`}>{status.label}</span>
+                      <ChevronRight size={14} className="text-muted-foreground sm:w-4 sm:h-4" />
                     </div>
                   </button>
                 );

@@ -20,12 +20,12 @@ func NewRepository() *Repository {
 	}
 }
 
-// GetAllProducts retrieves all products that are in stock
+// GetAllProducts retrieves all products
 func (r *Repository) GetAllProducts() ([]models.Product, error) {
 	db := r.db
 	var products []models.Product
 
-	result := db.Where("in_stock = ?", true).Order("created_at DESC").Find(&products)
+	result := db.Order("created_at DESC").Find(&products)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -38,7 +38,7 @@ func (r *Repository) GetProductsByCategory(category string) ([]models.Product, e
 	db := r.db
 	var products []models.Product
 
-	result := db.Where("category = ? AND in_stock = ?", category, true).Order("created_at DESC").Find(&products)
+	result := db.Where("category = ?", category).Order("created_at DESC").Find(&products)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -51,7 +51,7 @@ func (r *Repository) SearchProducts(query string) ([]models.Product, error) {
 	db := r.db
 	var products []models.Product
 
-	result := db.Where("in_stock = ? AND (LOWER(name) LIKE ? OR LOWER(description) LIKE ?)", true, "%"+query+"%", "%"+query+"%").
+	result := db.Where("LOWER(name) LIKE ? OR LOWER(description) LIKE ?", "%"+query+"%", "%"+query+"%").
 		Order("created_at DESC").
 		Find(&products)
 
@@ -67,7 +67,7 @@ func (r *Repository) GetProductByID(id string) (*models.Product, error) {
 	db := r.db
 	var product models.Product
 
-	result := db.Where("id = ? AND in_stock = ?", id, true).First(&product)
+	result := db.Where("id = ?", id).First(&product)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, nil

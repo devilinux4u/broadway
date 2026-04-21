@@ -112,6 +112,11 @@ func (s *Service) ProcessCODCheckout(userID string, req *CheckoutRequest, cartIt
 		return nil, errors.New("cart is empty")
 	}
 
+	// Validate inventory availability before checkout
+	if err := s.ValidateInventory(cartItems); err != nil {
+		return nil, err
+	}
+
 	// Convert cart items to order items
 	var orderItems []models.OrderItem
 	for _, item := range cartItems {
@@ -145,6 +150,12 @@ func (s *Service) ProcessCODCheckout(userID string, req *CheckoutRequest, cartIt
 		return nil, fmt.Errorf("failed to create order: %w", err)
 	}
 
+	// Decrease inventory for each item
+	if err := s.DecreaseInventory(cartItems); err != nil {
+		// Log error but don't fail the checkout as order is already created
+		fmt.Printf("Warning: failed to decrease inventory for order %s: %v\n", order.ID, err)
+	}
+
 	// Clear user's cart after successful order
 	if err := s.clearUserCart(userID); err != nil {
 		// Log error but don't fail the checkout
@@ -168,6 +179,11 @@ func (s *Service) ProcessKhaltiCheckout(userID string, req *CheckoutRequest, car
 
 	if len(cartItems) == 0 {
 		return nil, errors.New("cart is empty")
+	}
+
+	// Validate inventory availability before checkout
+	if err := s.ValidateInventory(cartItems); err != nil {
+		return nil, err
 	}
 
 	// Convert cart items to order items
@@ -203,6 +219,12 @@ func (s *Service) ProcessKhaltiCheckout(userID string, req *CheckoutRequest, car
 		return nil, fmt.Errorf("failed to create order: %w", err)
 	}
 
+	// Decrease inventory for each item
+	if err := s.DecreaseInventory(cartItems); err != nil {
+		// Log error but don't fail the checkout as order is already created
+		fmt.Printf("Warning: failed to decrease inventory for order %s: %v\n", order.ID, err)
+	}
+
 	// Generate Khalti payment URL by calling Khalti API
 	khaltiURL, err := generateKhaltiPaymentURL(order.ID, totalAmount, req.ShippingName)
 	if err != nil {
@@ -232,6 +254,52 @@ func (s *Service) clearUserCart(userID string) error {
 	if err := dbConn.Where("user_id = ?", userID).Delete(&models.CartItem{}).Error; err != nil {
 		return fmt.Errorf("failed to clear cart items: %w", err)
 	}
+	return nil
+}
+
+// ValidateInventory checks if all items in the cart have sufficient stock
+func (s *Service) ValidateInventory(cartItems []CartItemForCheckout) error {
+	dbConn := db.GetDB()
+
+	for _, item := range cartItems {
+		var product models.Product
+		if err := dbConn.Where("id = ?", item.ProductID).First(&product).Error; err != nil {
+			return fmt.Errorf("product %s not found", item.ProductID)
+		}
+
+		if product.StockQuantity < item.Quantity {
+			return fmt.Errorf("insufficient stock for %s", product.Name)
+		}
+
+		if !product.InStock {
+			return fmt.Errorf("product %s is out of stock", product.Name)
+		}
+	}
+
+	return nil
+}
+
+// DecreaseInventory decreases the stock quantity for each item in the order
+func (s *Service) DecreaseInventory(cartItems []CartItemForCheckout) error {
+	dbConn := db.GetDB()
+
+	for _, item := range cartItems {
+		var product models.Product
+		if err := dbConn.Where("id = ?", item.ProductID).First(&product).Error; err != nil {
+			return fmt.Errorf("failed to find product %s: %w", item.ProductID, err)
+		}
+
+		newQuantity := product.StockQuantity - item.Quantity
+		inStock := newQuantity > 0
+
+		if err := dbConn.Model(&models.Product{}).Where("id = ?", item.ProductID).Updates(map[string]interface{}{
+			"stock_quantity": newQuantity,
+			"in_stock":       inStock,
+		}).Error; err != nil {
+			return fmt.Errorf("failed to update stock for product %s: %w", item.ProductID, err)
+		}
+	}
+
 	return nil
 }
 

@@ -1,6 +1,7 @@
 package order
 
 import (
+	"ecom/go/internal/db"
 	"ecom/go/internal/db/models"
 	"errors"
 	"fmt"
@@ -43,6 +44,11 @@ func (s *Service) CreateOrder(req *CreateOrderRequest, userID string) (*models.O
 		return nil, errors.New("order must contain at least one item")
 	}
 
+	// Validate inventory before creating order
+	if err := s.ValidateInventory(req.OrderItems); err != nil {
+		return nil, err
+	}
+
 	// Calculate total amount
 	var totalAmount float64
 	for _, item := range req.OrderItems {
@@ -83,6 +89,12 @@ func (s *Service) CreateOrder(req *CreateOrderRequest, userID string) (*models.O
 
 	if err := s.repo.CreateOrder(order); err != nil {
 		return nil, fmt.Errorf("failed to create order: %w", err)
+	}
+
+	// Decrease inventory for each item
+	if err := s.DecreaseInventory(req.OrderItems); err != nil {
+		// Log error but don't fail as order is already created
+		fmt.Printf("Warning: failed to decrease inventory for order %s: %v\n", order.ID, err)
 	}
 
 	return order, nil
@@ -325,4 +337,50 @@ func (s *Service) ParseDateFilter(dateStr string) (time.Time, error) {
 	}
 
 	return date, nil
+}
+
+// ValidateInventory checks if all items have sufficient stock
+func (s *Service) ValidateInventory(items []CreateOrderItem) error {
+	dbConn := db.GetDB()
+
+	for _, item := range items {
+		var product models.Product
+		if err := dbConn.Where("id = ?", item.ProductID).First(&product).Error; err != nil {
+			return fmt.Errorf("product %s not found", item.ProductID)
+		}
+
+		if product.StockQuantity < item.Quantity {
+			return fmt.Errorf("insufficient stock for %s", product.Name)
+		}
+
+		if !product.InStock {
+			return fmt.Errorf("product %s is out of stock", product.Name)
+		}
+	}
+
+	return nil
+}
+
+// DecreaseInventory decreases stock for each item in the order
+func (s *Service) DecreaseInventory(items []CreateOrderItem) error {
+	dbConn := db.GetDB()
+
+	for _, item := range items {
+		var product models.Product
+		if err := dbConn.Where("id = ?", item.ProductID).First(&product).Error; err != nil {
+			return fmt.Errorf("failed to find product %s: %w", item.ProductID, err)
+		}
+
+		newQuantity := product.StockQuantity - item.Quantity
+		inStock := newQuantity > 0
+
+		if err := dbConn.Model(&models.Product{}).Where("id = ?", item.ProductID).Updates(map[string]interface{}{
+			"stock_quantity": newQuantity,
+			"in_stock":       inStock,
+		}).Error; err != nil {
+			return fmt.Errorf("failed to update stock for product %s: %w", item.ProductID, err)
+		}
+	}
+
+	return nil
 }

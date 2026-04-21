@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { shopAPI } from "@/services/shopAPI";
 import { getImageUrl } from "@/utils/imageUrl";
@@ -33,6 +33,29 @@ const Shop = () => {
   const sort = searchParams.get("sort") || "newest";
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
   const [searchInput, setSearchInput] = useState(search);
+
+  const categoryScrollRef = useRef<HTMLDivElement>(null);
+  const [categorySliderPosition, setCategorySliderPosition] = useState(0);
+  const [categoryCardWidth, setCategoryCardWidth] = useState(0);
+
+  const handleCategoryScroll = () => {
+    if (categoryScrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = categoryScrollRef.current;
+      const maxScroll = scrollWidth - clientWidth;
+      const maxPosition = clientWidth - categoryCardWidth;
+      const position = maxScroll > 0 ? (scrollLeft / maxScroll) * maxPosition : 0;
+      setCategorySliderPosition(Math.max(0, position));
+    }
+  };
+
+  const updateCategoryCardWidth = () => {
+    if (categoryScrollRef.current) {
+      const firstChild = categoryScrollRef.current.firstChild as HTMLElement;
+      if (firstChild) {
+        setCategoryCardWidth(firstChild.offsetWidth);
+      }
+    }
+  };
 
   // Load categories on mount
   useEffect(() => {
@@ -161,73 +184,92 @@ const Shop = () => {
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Navbar settings={settings} />
-      <main className="pt-2 md:pt-6">
-        <div className="container mx-auto px-4">
+      <main className="pt-2 sm:pt-4 md:pt-6">
+        <div className="container mx-auto px-2 sm:px-4">
 
           {/* Search and Category Row */}
-          <div className="mb-8 flex flex-col md:flex-row md:items-center gap-4 md:justify-center md:max-w-4xl md:mx-auto">
+          <div className="mb-6 sm:mb-8 flex flex-col gap-3 sm:gap-4">
             {/* Search Bar */}
-            <form onSubmit={handleSearch} className="flex-1 md:flex-none md:w-96">
+            <form onSubmit={handleSearch} className="w-full">
               <div className="relative">
-                <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Search size={16} className="sm:w-5 sm:h-5 absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   placeholder="Search products..."
-                  className="pl-12 pr-4 h-12 rounded-full border-border bg-card w-full text-base"
+                  className="pl-9 sm:pl-12 pr-8 sm:pr-4 h-9 sm:h-12 rounded-full border-border bg-card w-full text-xs sm:text-base"
                 />
                 {searchInput && (
                   <button
                     type="button"
                     onClick={() => { setSearchInput(""); setParam("q", ""); }}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5"
                   >
-                    <X size={18} />
+                    <X size={14} className="sm:w-[18px] sm:h-[18px]" />
                   </button>
                 )}
               </div>
             </form>
 
             {/* Category Tabs */}
-            <div className="flex items-center justify-center gap-2 overflow-x-auto pb-2 md:pb-0 flex-wrap">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setParam("category", cat)}
-                  className={`px-4 py-2 text-sm font-medium rounded-full capitalize transition-colors whitespace-nowrap ${
-                    category === cat
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-secondary text-secondary-foreground hover:bg-muted"
-                  }`}
-                >
-                  {cat === "all" ? "All" : cat}
-                </button>
-              ))}
+            <div className="flex flex-col w-full">
+              <div 
+                ref={categoryScrollRef}
+                onScroll={handleCategoryScroll}
+                onLoad={updateCategoryCardWidth}
+                onMouseEnter={updateCategoryCardWidth}
+                className="flex items-center justify-center gap-1.5 sm:gap-2 overflow-x-auto hide-scrollbar pb-1.5 sm:pb-2 md:pb-0"
+              >
+                {categories.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setParam("category", cat)}
+                    className={`shrink-0 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-full capitalize transition-colors whitespace-nowrap ${
+                      category === cat
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-secondary text-secondary-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {cat === "all" ? "All" : cat}
+                  </button>
+                ))}
+              </div>
+              {categories.length > 4 && (
+                <div className="h-1 bg-foreground/10 rounded-full overflow-visible mt-1.5 sm:mt-2">
+                  <div
+                    className="h-full bg-primary rounded-full transition-all duration-300"
+                    style={{ 
+                      width: `${categoryCardWidth}px`,
+                      transform: `translateX(${categorySliderPosition}px)`
+                    }}
+                  />
+                </div>
+              )}
             </div>
           </div>
 
           {/* Sort & Filter Bar */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-3">
-            <p className="text-sm text-muted-foreground">{filtered.length} product{filtered.length !== 1 ? "s" : ""}</p>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-2 sm:gap-3">
+            <p className="text-xs sm:text-sm text-muted-foreground">{filtered.length} product{filtered.length !== 1 ? "s" : ""}</p>
             <Button
               variant="outline"
               size="sm"
-              className="gap-2 md:hidden flex-1 sm:flex-none"
+              className="gap-2 md:hidden w-full sm:w-auto"
               onClick={() => setShowFilters(!showFilters)}
             >
-              <SlidersHorizontal size={14} /> Filters
+              <SlidersHorizontal size={12} className="sm:w-4 sm:h-4" /> Filters
             </Button>
           </div>
 
-          <div className="flex gap-6 md:gap-8">
+          <div className="flex gap-4 sm:gap-6 md:gap-8">
             {/* Sidebar Filters (desktop) */}
             <div className={`${showFilters ? "block" : "hidden"} md:block w-full md:w-52 flex-shrink-0 mb-8 md:mb-0`}>
-              <div className="space-y-4 md:space-y-6 sticky top-20 pb-20 md:pb-24">
+              <div className="space-y-3 sm:space-y-4 md:space-y-6 sticky top-16 sm:top-20 pb-20 md:pb-24">
                 {/* Sort Filter */}
-                <div className="bg-card p-4 rounded-lg">
-                  <h3 className="text-sm font-semibold text-foreground mb-3">Sort By</h3>
+                <div className="bg-card p-2.5 sm:p-3 md:p-4 rounded-lg">
+                  <h3 className="text-xs sm:text-sm font-semibold text-foreground mb-2 sm:mb-3">Sort By</h3>
                   <Select value={sort} onValueChange={(v) => setParam("sort", v)}>
-                    <SelectTrigger className="w-full h-9 text-sm">
+                    <SelectTrigger className="w-full h-8 sm:h-9 text-xs sm:text-sm">
                       <SelectValue placeholder="Sort by" />
                     </SelectTrigger>
                     <SelectContent>
@@ -240,42 +282,42 @@ const Shop = () => {
                 </div>
 
                 {/* Price Filter */}
-                <div className="bg-card p-4 rounded-lg">
-                  <h3 className="text-sm font-semibold text-foreground mb-4">Price Range</h3>
+                <div className="bg-card p-2.5 sm:p-3 md:p-4 rounded-lg">
+                  <h3 className="text-xs sm:text-sm font-semibold text-foreground mb-2 sm:mb-4">Price Range</h3>
                   <Slider
                     min={0}
                     max={maxPrice}
                     step={50}
                     value={priceRange}
                     onValueChange={(v) => setPriceRange(v as [number, number])}
-                    className="mb-4"
+                    className="mb-3 sm:mb-4"
                   />
-                  <div className="space-y-2">
-                    <div className="flex gap-2">
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <div className="flex gap-1.5 sm:gap-2">
                       <div className="flex-1">
-                        <label className="text-xs text-muted-foreground">Min</label>
+                        <label className="text-[10px] sm:text-xs text-muted-foreground">Min</label>
                         <Input
                           type="number"
                           value={priceRange[0]}
                           onChange={(e) => setPriceRange([Math.max(0, parseInt(e.target.value) || 0), priceRange[1]])}
-                          className="h-8 text-sm"
+                          className="h-7 sm:h-8 text-xs"
                           min="0"
                           max={priceRange[1]}
                         />
                       </div>
                       <div className="flex-1">
-                        <label className="text-xs text-muted-foreground">Max</label>
+                        <label className="text-[10px] sm:text-xs text-muted-foreground">Max</label>
                         <Input
                           type="number"
                           value={priceRange[1]}
                           onChange={(e) => setPriceRange([priceRange[0], Math.min(maxPrice, parseInt(e.target.value) || maxPrice)])}
-                          className="h-8 text-sm"
+                          className="h-7 sm:h-8 text-xs"
                           min={priceRange[0]}
                           max={maxPrice}
                         />
                       </div>
                     </div>
-                    <div className="text-xs text-muted-foreground text-center pt-2 border-t">
+                    <div className="text-[10px] sm:text-xs text-muted-foreground text-center pt-1.5 sm:pt-2 border-t">
                       Rs. {priceRange[0].toLocaleString()} - Rs. {priceRange[1].toLocaleString()}
                     </div>
                   </div>
@@ -284,27 +326,27 @@ const Shop = () => {
             </div>
 
             {/* Product Grid */}
-            <div className="flex-1 pb-12 md:pb-16">
+            <div className="flex-1 pb-8 sm:pb-12 md:pb-16">
               {loading ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 md:gap-4 lg:gap-6">
                   {Array.from({ length: 6 }).map((_, i) => (
                     <div key={i} className="animate-pulse">
-                      <div className="aspect-square bg-secondary rounded-sm mb-3" />
-                      <div className="h-4 bg-secondary rounded w-3/4 mb-2" />
-                      <div className="h-4 bg-secondary rounded w-1/2" />
+                      <div className="aspect-square bg-secondary rounded-sm mb-2 sm:mb-3" />
+                      <div className="h-3 sm:h-4 bg-secondary rounded w-3/4 mb-1.5 sm:mb-2" />
+                      <div className="h-3 sm:h-4 bg-secondary rounded w-1/2" />
                     </div>
                   ))}
                 </div>
               ) : filtered.length === 0 ? (
-                <div className="text-center py-20">
-                  <p className="text-muted-foreground mb-4">No products found</p>
-                  <Button variant="outline" onClick={() => { setSearchInput(""); setSearchParams(new URLSearchParams()); }}>
+                <div className="text-center py-12 sm:py-16 md:py-20">
+                  <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">No products found</p>
+                  <Button variant="outline" size="sm" onClick={() => { setSearchInput(""); setSearchParams(new URLSearchParams()); }}>
                     Clear Filters
                   </Button>
                 </div>
               ) : (
                 <>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 md:gap-4 lg:gap-6">
                     {paginatedProducts.map((p) => (
                       <div
                         key={p.id}
@@ -325,16 +367,17 @@ const Shop = () => {
                   
                   {/* Pagination */}
                   {totalPages > 1 && (
-                    <div className="flex items-center justify-center gap-2 mt-8">
+                    <div className="flex items-center justify-center gap-1 sm:gap-2 mt-6 sm:mt-8">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                         disabled={currentPage === 1}
+                        className="h-7 sm:h-8 px-2 sm:px-3 text-xs sm:text-sm"
                       >
                         Previous
                       </Button>
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-0.5 sm:gap-1">
                         {Array.from({ length: Math.min(5, totalPages) }).map((_, i) => {
                           let pageNum;
                           if (totalPages <= 5) {
@@ -351,7 +394,7 @@ const Shop = () => {
                               key={pageNum}
                               variant={currentPage === pageNum ? "default" : "outline"}
                               size="sm"
-                              className="w-8 h-8 p-0"
+                              className="w-6 h-6 sm:w-8 sm:h-8 p-0 text-xs sm:text-sm"
                               onClick={() => setCurrentPage(pageNum)}
                             >
                               {pageNum}
@@ -364,6 +407,7 @@ const Shop = () => {
                         size="sm"
                         onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                         disabled={currentPage === totalPages}
+                        className="h-7 sm:h-8 px-2 sm:px-3 text-xs sm:text-sm"
                       >
                         Next
                       </Button>

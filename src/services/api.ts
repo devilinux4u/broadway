@@ -51,6 +51,21 @@ export const apiCall = async (
 
   if (!response.ok) {
     if (response.status === 401) {
+      const skipRedirectOnAuthForm =
+        endpoint === "/auth/login" ||
+        endpoint === "/auth/signup" ||
+        endpoint === "/auth/forgot-password" ||
+        endpoint === "/auth/reset-password" ||
+        endpoint === "/admin/auth/login" ||
+        endpoint === "/admin/auth/register";
+
+      if (skipRedirectOnAuthForm) {
+        const error = await response.json().catch(() => ({
+          error: response.statusText,
+        }));
+        throw new Error(error.error || `API Error: ${response.status}`);
+      }
+
       if (useUserToken) {
         localStorage.removeItem("authToken");
         localStorage.removeItem("user");

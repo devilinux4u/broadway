@@ -1,3 +1,4 @@
+import { useRef, useState } from "react";
 import { getImageUrl } from "@/utils/imageUrl";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { Calendar } from "lucide-react";
@@ -17,6 +18,29 @@ const CategorySection = ({ data = {} }: CategorySectionProps) => {
   const classItems = Array.isArray(classesData.items) ? classesData.items : [];
   const upcomingClasses = classItems.slice(0, 3);
 
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [sliderPosition, setSliderPosition] = useState(0);
+  const [cardWidth, setCardWidth] = useState(0);
+
+  const handleScroll = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      const maxScroll = scrollWidth - clientWidth;
+      const maxPosition = clientWidth - cardWidth;
+      const position = maxScroll > 0 ? (scrollLeft / maxScroll) * maxPosition : 0;
+      setSliderPosition(Math.max(0, position));
+    }
+  };
+
+  const updateCardWidth = () => {
+    if (scrollContainerRef.current) {
+      const firstChild = scrollContainerRef.current.firstChild as HTMLElement;
+      if (firstChild) {
+        setCardWidth(firstChild.offsetWidth);
+      }
+    }
+  };
+
   if (categories.length === 0) {
     return null;
   }
@@ -24,14 +48,21 @@ const CategorySection = ({ data = {} }: CategorySectionProps) => {
   return (
     <section id="categories" className="py-12 md:py-16 bg-warm-cream overflow-hidden">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-6 md:mb-8">
-          <p className="text-sm tracking-[0.3em] uppercase text-primary mb-3">Browse</p>
-          <h2 className="font-display text-4xl md:text-5xl font-semibold text-foreground">Shop by Category</h2>
+        <div className="text-center mb-4 sm:mb-6 md:mb-8">
+          <p className="text-xs sm:text-sm tracking-[0.3em] uppercase text-primary mb-2 sm:mb-3">Browse</p>
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground">Shop by Category</h2>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_0.6fr] min-h-[220px] md:min-h-[280px] rounded-sm gap-4 lg:gap-10">
-          <div className="flex items-center overflow-x-auto hide-scrollbar">
-            <div className="flex gap-6 pl-4 pr-4 py-8 w-max snap-x snap-mandatory">
+          <div className="flex flex-col">
+            <div 
+              ref={scrollContainerRef}
+              onScroll={handleScroll}
+              onLoad={updateCardWidth}
+              onMouseEnter={updateCardWidth}
+              className="flex items-center justify-center overflow-x-auto hide-scrollbar"
+            >
+              <div className="flex gap-6 pl-4 pr-4 py-8 w-max snap-x snap-mandatory">
               {featuredCategories.map((cat: any, i: number) => {
                 const catImageUrl = getImageUrl(cat.image_url);
 
@@ -55,7 +86,19 @@ const CategorySection = ({ data = {} }: CategorySectionProps) => {
                   </a>
                 );
               })}
+              </div>
             </div>
+            {categories.length > 4 && (
+              <div className="h-1 bg-foreground/10 rounded-full overflow-visible mt-2">
+                <div
+                  className="h-full bg-primary rounded-full transition-all duration-300"
+                  style={{ 
+                    width: `${cardWidth}px`,
+                    transform: `translateX(${sliderPosition}px)`
+                  }}
+                />
+              </div>
+            )}
           </div>
 
           <div className="relative min-h-[220px] md:min-h-[280px] bg-gradient-to-br from-primary/10 to-accent/10 rounded-sm overflow-hidden flex flex-col items-center justify-center p-6">
