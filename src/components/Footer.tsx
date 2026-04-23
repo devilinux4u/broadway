@@ -15,30 +15,36 @@ const Footer = ({ settings = {} }: FooterProps) => {
   const instagramUrl = settings.instagram_url || "";
   const facebookUrl = settings.facebook_url || "";
   const tiktokUrl = settings.tiktok_url || "";
+  const menuItems = [
+    { label: "Track Order", href: "/my-orders" },
+    { label: "Class Update", href: "/classes" },
+    { label: "Privacy Policy", href: "#" },
+    { label: "Terms of Use", href: "#" },
+  ];
 
   return (
     <footer className="bg-sky-200 py-6 sm:py-8 md:py-10 lg:py-12">
       <div className="container mx-auto px-2 sm:px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8 items-start">
-          <div className="md:col-span-1 lg:col-span-4">
-            {logoImg && <img src={logoImg} alt={settings.store_name} className="h-16 sm:h-20 md:h-28 lg:h-36 w-auto mb-3 sm:mb-4" />}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8 items-start">
+          <div className="sm:col-span-1 lg:col-span-4">
+            {logoImg && <img src={logoImg} alt={settings.store_name} className="h-20 sm:h-28 lg:h-36 w-auto mb-2 sm:mb-4" />}
           </div>
 
-          <div className="md:col-span-1 lg:col-span-4 flex flex-col gap-4 sm:gap-6 lg:gap-8">
-            <div>
-              <h4 className="font-display text-sm sm:text-base md:text-lg lg:text-xl lg:text-2xl font-semibold text-foreground mb-2 sm:mb-3 lg:mb-4">Menu</h4>
-              <ul className="space-y-1 sm:space-y-1.5 md:space-y-2 lg:space-y-2.5">
-                {["Contact Us", "Track Order", "Class Update", "Privacy Policy", "Terms of Use"].map((item) => (
-                  <li key={item}>
-                    <a href="#" className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors">{item}</a>
+          <div className="sm:col-span-1 lg:col-span-4 flex flex-col sm:flex-row sm:gap-6 lg:gap-8">
+            <div className="mb-4 sm:mb-0">
+              <h4 className="font-display text-base sm:text-lg lg:text-xl lg:text-2xl font-semibold text-foreground mb-2 sm:mb-3 lg:mb-4">Menu</h4>
+              <ul className="space-y-1.5 sm:space-y-2 lg:space-y-2.5">
+                {menuItems.map((item) => (
+                  <li key={item.label}>
+                    <a href={item.href} className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors">{item.label}</a>
                   </li>
                 ))}
               </ul>
             </div>
 
             <div>
-              <h4 className="font-display text-sm sm:text-base md:text-lg lg:text-xl lg:text-2xl font-semibold text-foreground mb-2 sm:mb-3 lg:mb-4">Contact</h4>
-              <ul className="space-y-1 sm:space-y-1.5 md:space-y-2 lg:space-y-2.5 text-xs sm:text-sm text-muted-foreground">
+              <h4 className="font-display text-base sm:text-lg lg:text-xl lg:text-2xl font-semibold text-foreground mb-2 sm:mb-3 lg:mb-4">Contact</h4>
+              <ul className="space-y-1.5 sm:space-y-2 lg:space-y-2.5 text-xs sm:text-sm text-muted-foreground">
                 {location && <li>{location}</li>}
                 {phone && <li><a href={`tel:${phone.replace(/[^+\d]/g, "")}`} className="hover:text-primary transition-colors">{phone}</a></li>}
                 {email && <li><a href={`mailto:${email}`} className="hover:text-primary transition-colors">{email}</a></li>}
@@ -46,7 +52,7 @@ const Footer = ({ settings = {} }: FooterProps) => {
             </div>
           </div>
 
-          <div className="md:col-span-2 lg:col-span-4">
+          <div className="sm:col-span-2 lg:col-span-4">
             <h4 className="font-display text-base sm:text-lg lg:text-xl lg:text-2xl font-semibold text-foreground mb-2 sm:mb-3 lg:mb-4 uppercase tracking-wide">Join Our Community</h4>
             <div className="flex items-start gap-4 sm:gap-5 lg:gap-6">
               {[

@@ -1,0 +1,19 @@
+{
+  "name": "Ultimate Professional",
+  "short_name": "Ultimate Professional",
+  "description": "Shop authentic cosmetics and beauty products in Nepal",
+  "theme_color": "#be185d",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

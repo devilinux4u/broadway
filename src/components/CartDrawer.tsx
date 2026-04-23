@@ -1,7 +1,7 @@
 import { X, Plus, Minus, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { shopAPI } from "@/services/shopAPI";
 
@@ -10,6 +10,33 @@ const CartDrawer = () => {
   const navigate = useNavigate();
   const [updating, setUpdating] = useState<string | null>(null);
   const [checkingStock, setCheckingStock] = useState(false);
+
+  const closeCart = () => {
+    setIsCartOpen(false);
+    if (window.history.state?.cartDrawer === true) {
+      window.history.back();
+    }
+  };
+
+  useEffect(() => {
+    if (!isCartOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    window.history.pushState({ cartDrawer: true }, "");
+
+    const handlePopState = () => {
+      setIsCartOpen(false);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [isCartOpen, setIsCartOpen]);
 
   const handleQuantityChange = async (itemId: string, newQuantity: number) => {
     setUpdating(itemId);
@@ -85,11 +112,11 @@ const CartDrawer = () => {
 
   return (
     <>
-      <div className="fixed inset-0 bg-foreground/40 z-40 cursor-pointer" onClick={() => setIsCartOpen(false)} />
-      <div className="fixed right-0 top-0 bottom-0 max-w-md w-[min(100%,28rem)] bg-background z-50 shadow-2xl flex flex-col animate-slide-in-right" onClick={(e) => e.stopPropagation()}>
+      <div className="fixed inset-0 bg-foreground/40 z-[40] md:z-[70]" onClick={closeCart} />
+      <div className="fixed right-0 top-0 bottom-16 md:bottom-0 max-w-md w-[min(100%,28rem)] bg-background z-[45] md:z-[80] shadow-2xl flex flex-col animate-slide-in-right">
         <div className="flex items-center justify-between p-3 sm:p-4 md:p-5 border-b border-border">
           <h2 className="font-display text-base sm:text-lg md:text-xl font-semibold text-foreground">Your Cart</h2>
-          <button onClick={() => setIsCartOpen(false)} className="p-1 text-foreground hover:text-primary">
+          <button onClick={closeCart} className="p-1 text-foreground hover:text-primary" aria-label="Close cart">
             <X size={18} className="sm:w-5 sm:h-5" />
           </button>
         </div>

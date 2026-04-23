@@ -158,7 +158,6 @@ const Classes = () => {
       <main className="container mx-auto px-2 sm:px-4 py-6 sm:py-8 pb-20 md:pb-0">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
-          <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2 sm:mb-3">Classes</h1>
           <p className="text-sm sm:text-base text-foreground/70">View our classes and their schedules</p>
         </div>
 

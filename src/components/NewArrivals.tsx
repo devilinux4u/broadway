@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "./ProductCard";
 import { getImageUrl } from "@/utils/imageUrl";
@@ -59,6 +59,12 @@ const NewArrivals = ({ products: apiProducts }: NewArrivalsProps) => {
     return null;
   }
 
+  useEffect(() => {
+    updateCardWidth();
+    window.addEventListener("resize", updateCardWidth);
+    return () => window.removeEventListener("resize", updateCardWidth);
+  }, [displayProducts.length]);
+
   const isScrollable = displayProducts.length > 4;
 
   return (
@@ -77,21 +83,31 @@ const NewArrivals = ({ products: apiProducts }: NewArrivalsProps) => {
             className={
               isScrollable
                 ? "flex overflow-x-auto hide-scrollbar gap-4 md:gap-8"
-                : "grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8"
+                : "flex overflow-x-auto hide-scrollbar gap-4 md:grid md:grid-cols-4 md:gap-8 items-stretch"
             }
           >
           {displayProducts.map((product, i) => (
             <div
               key={product.name + i}
-              className={`animate-fade-in-up cursor-pointer ${isScrollable ? "shrink-0 w-[calc(50%-0.5rem)] md:w-[calc(25%-1.5rem)]" : ""}`}
+              className={`animate-fade-in-up cursor-pointer h-full ${isScrollable ? "shrink-0 w-[calc(72%-0.5rem)] sm:w-[calc(50%-0.5rem)] md:w-[calc(25%-1.5rem)]" : "shrink-0 w-[calc(72%-0.5rem)] sm:w-[calc(50%-0.5rem)] md:w-auto"}`}
               style={{ animationDelay: `${i * 0.08}s` }}
               onClick={() => (product.id ? navigate(`/product/${product.id}`) : undefined)}
             >
               <ProductCard {...product} />
             </div>
           ))}
-          </div>          {isScrollable && (
-            <div className="mt-4 h-1 bg-foreground/10 rounded-full overflow-visible">
+          </div>
+          <div className="mt-4 h-1 bg-foreground/10 rounded-full overflow-visible md:hidden">
+            <div
+              className="h-full bg-primary rounded-full transition-all duration-300"
+              style={{
+                width: `${cardWidth}px`,
+                transform: `translateX(${sliderPosition}px)`
+              }}
+            />
+          </div>
+          {isScrollable && (
+            <div className="mt-4 h-1 bg-foreground/10 rounded-full overflow-visible hidden md:block">
               <div
                 className="h-full bg-primary rounded-full transition-all duration-300"
                 style={{ 

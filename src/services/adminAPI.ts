@@ -69,6 +69,29 @@ export const dashboardAPI = {
   },
 };
 
+// Admin Analytics API
+export const analyticsAPI = {
+  getFullAnalytics: async (months: number = 12, topProductsLimit: number = 10) => {
+    return apiCall(`/admin/analytics?months=${months}&top_products_limit=${topProductsLimit}`);
+  },
+
+  getOverview: async () => {
+    return apiCall("/admin/analytics/overview");
+  },
+
+  getMonthlySales: async (months: number = 12) => {
+    return apiCall(`/admin/analytics/monthly-sales?months=${months}`);
+  },
+
+  getTopProducts: async (limit: number = 10) => {
+    return apiCall(`/admin/analytics/top-products?limit=${limit}`);
+  },
+
+  getPaymentIncome: async () => {
+    return apiCall("/admin/analytics/payment-income");
+  },
+};
+
 // Admin Auth API
 export const adminAuthAPI = {
   login: async (email: string, password: string) => {

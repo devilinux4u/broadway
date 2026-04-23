@@ -109,8 +109,8 @@ const ReelsSection = ({ data = {} }: ReelsSectionProps) => {
           <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground">Reels</h2>
         </div>
 
-        <div className="overflow-x-auto [scrollbar-width:thin] [-ms-overflow-style:auto] [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:rounded" ref={containerRef}>
-          <div className="w-max min-w-full flex items-center justify-center gap-2 md:gap-3 px-2 md:px-3 pb-2">
+        <div className="overflow-x-auto md:overflow-x-hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory touch-pan-x" ref={containerRef}>
+          <div className="w-max min-w-full flex items-center justify-start md:justify-center gap-2 md:gap-3 px-1 md:px-2">
           {loopedReels.map((reel, i) => (
             <article
               key={`${reel.title || "reel"}-${i}-${Math.floor(i / Math.max(reels.length, 1))}`}

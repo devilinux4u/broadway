@@ -29,18 +29,43 @@ interface OrderItem {
 const statusOptions = [
   "pending",
   "confirmed",
-  "processing",
   "shipped",
   "delivered",
   "cancelled",
 ];
 const paymentStatusOptions = ["pending", "paid", "failed", "refunded"];
+const quickStatusFilters = ["all", "pending", "confirmed", "shipped", "delivered"] as const;
+type QuickStatusFilter = (typeof quickStatusFilters)[number];
+
+const statusMeta: Record<string, { badge: string; border: string }> = {
+  pending: {
+    badge: "bg-amber-100 text-amber-800 border border-amber-200",
+    border: "border-l-amber-500",
+  },
+  confirmed: {
+    badge: "bg-sky-100 text-sky-800 border border-sky-200",
+    border: "border-l-sky-500",
+  },
+  shipped: {
+    badge: "bg-violet-100 text-violet-800 border border-violet-200",
+    border: "border-l-violet-500",
+  },
+  delivered: {
+    badge: "bg-emerald-100 text-emerald-800 border border-emerald-200",
+    border: "border-l-emerald-500",
+  },
+  cancelled: {
+    badge: "bg-rose-100 text-rose-800 border border-rose-200",
+    border: "border-l-rose-500",
+  },
+};
 
 const AdminOrders = () => {
   const { toast } = useToast();
   const [orders, setOrders] = useState<Order[]>([]);
   const [orderItems, setOrderItems] = useState<Record<string, OrderItem[]>>({});
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<QuickStatusFilter>("all");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -140,19 +165,79 @@ const AdminOrders = () => {
       <p className="text-muted-foreground text-center py-10">Loading orders...</p>
     );
 
+  const statusCounts = {
+    pending: orders.filter((o) => o.status === "pending").length,
+    confirmed: orders.filter((o) => o.status === "confirmed").length,
+    shipped: orders.filter((o) => o.status === "shipped").length,
+    delivered: orders.filter((o) => o.status === "delivered").length,
+  };
+
+  const filteredOrders =
+    statusFilter === "all"
+      ? orders
+      : orders.filter((order) => order.status === statusFilter);
+
   return (
     <div>
       <h2 className="font-display text-xl font-bold text-foreground mb-6">
-        Orders ({orders.length})
+        Orders ({filteredOrders.length}/{orders.length})
       </h2>
-      {orders.length === 0 ? (
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+        <button
+          onClick={() => setStatusFilter("pending")}
+          className="text-left p-3 rounded-sm border border-amber-200 bg-amber-50 hover:bg-amber-100 transition-colors"
+        >
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-amber-700">Pending</p>
+          <p className="text-xl font-bold text-amber-900">{statusCounts.pending}</p>
+        </button>
+        <button
+          onClick={() => setStatusFilter("confirmed")}
+          className="text-left p-3 rounded-sm border border-sky-200 bg-sky-50 hover:bg-sky-100 transition-colors"
+        >
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-sky-700">Confirmed</p>
+          <p className="text-xl font-bold text-sky-900">{statusCounts.confirmed}</p>
+        </button>
+        <button
+          onClick={() => setStatusFilter("shipped")}
+          className="text-left p-3 rounded-sm border border-violet-200 bg-violet-50 hover:bg-violet-100 transition-colors"
+        >
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-violet-700">Shipped</p>
+          <p className="text-xl font-bold text-violet-900">{statusCounts.shipped}</p>
+        </button>
+        <button
+          onClick={() => setStatusFilter("delivered")}
+          className="text-left p-3 rounded-sm border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 transition-colors"
+        >
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-700">Delivered</p>
+          <p className="text-xl font-bold text-emerald-900">{statusCounts.delivered}</p>
+        </button>
+      </div>
+
+      <div className="flex flex-wrap gap-2 mb-4">
+        {quickStatusFilters.map((filter) => (
+          <button
+            key={filter}
+            onClick={() => setStatusFilter(filter)}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-sm border transition-colors ${
+              statusFilter === filter
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-background text-foreground border-border hover:bg-secondary"
+            }`}
+          >
+            {filter === "all" ? "All" : filter.charAt(0).toUpperCase() + filter.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      {filteredOrders.length === 0 ? (
         <div className="text-center py-16">
-          <p className="text-muted-foreground">No orders yet.</p>
+          <p className="text-muted-foreground">No orders found for this status.</p>
         </div>
       ) : (
         <div className="space-y-3">
-          {orders.map((order) => (
-            <div key={order.id} className="bg-card border border-border rounded-sm overflow-hidden">
+          {filteredOrders.map((order) => (
+            <div key={order.id} className={`bg-card border border-border border-l-4 ${statusMeta[order.status]?.border || "border-l-border"} rounded-sm overflow-hidden`}>
               <div
                 className="p-4 flex items-center justify-between cursor-pointer hover:bg-secondary/50 transition-colors"
                 onClick={() => toggleExpand(order.id)}
@@ -173,13 +258,7 @@ const AdminOrders = () => {
                     Rs. {order.total_amount.toLocaleString('en-IN')}
                   </span>
                   <span
-                    className={`text-[10px] font-medium px-2 py-0.5 rounded ${
-                      order.status === "delivered"
-                        ? "bg-primary/10 text-primary"
-                        : order.status === "cancelled"
-                          ? "bg-destructive/10 text-destructive"
-                          : "bg-accent/10 text-accent"
-                    }`}
+                    className={`text-[10px] font-semibold px-2.5 py-1 rounded uppercase tracking-wide ${statusMeta[order.status]?.badge || "bg-muted text-foreground border border-border"}`}
                   >
                     {order.status}
                   </span>

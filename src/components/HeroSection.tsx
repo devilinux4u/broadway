@@ -1,4 +1,5 @@
 import { getImageUrl } from "@/utils/imageUrl";
+import { Link } from "react-router-dom";
 
 interface HeroSectionProps {
   data?: Record<string, any>;
@@ -51,9 +52,9 @@ const HeroSection = ({ data = {} }: HeroSectionProps) => {
             {description}
           </p>
           <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
-            <a href="#products" className="inline-flex items-center justify-center sm:justify-start px-4 sm:px-8 py-3 sm:py-3.5 bg-primary text-primary-foreground font-medium text-xs sm:text-sm tracking-wide rounded-sm hover:bg-primary/90 transition-all duration-300 hover:shadow-lg">
+            <Link to="/shop" className="inline-flex items-center justify-center sm:justify-start px-4 sm:px-8 py-3 sm:py-3.5 bg-primary text-primary-foreground font-medium text-xs sm:text-sm tracking-wide rounded-sm hover:bg-primary/90 transition-all duration-300 hover:shadow-lg">
               {ctaText}
-            </a>
+            </Link>
             <a href="#categories" className="inline-flex items-center justify-center sm:justify-start px-4 sm:px-8 py-3 sm:py-3.5 border border-primary-foreground/30 text-primary-foreground font-medium text-xs sm:text-sm tracking-wide rounded-sm hover:bg-primary-foreground/10 transition-all duration-300">
               {cta2Text}
             </a>

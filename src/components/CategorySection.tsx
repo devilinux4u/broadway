@@ -22,6 +22,17 @@ const CategorySection = ({ data = {} }: CategorySectionProps) => {
   const [sliderPosition, setSliderPosition] = useState(0);
   const [cardWidth, setCardWidth] = useState(0);
 
+  const getShopCategoryKey = (cat: any) => {
+    const raw = String(cat?.category || cat?.slug || cat?.name || "").trim().toLowerCase();
+    if (!raw) return "";
+    if (raw.includes("face")) return "face";
+    if (raw.includes("eye")) return "eyes";
+    if (raw.includes("lip")) return "lips";
+    if (raw.includes("nail")) return "nails";
+    if (raw.includes("tool") || raw.includes("accessor")) return "tools";
+    return raw;
+  };
+
   const handleScroll = () => {
     if (scrollContainerRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
@@ -65,11 +76,17 @@ const CategorySection = ({ data = {} }: CategorySectionProps) => {
               <div className="flex gap-6 pl-4 pr-4 py-8 w-max snap-x snap-mandatory">
               {featuredCategories.map((cat: any, i: number) => {
                 const catImageUrl = getImageUrl(cat.image_url);
+                const categoryKey = getShopCategoryKey(cat);
+                const categoryHref = categoryKey ? `/shop?category=${encodeURIComponent(categoryKey)}` : "/shop";
 
                 return (
                   <a
                     key={`promo-${cat.name}-${i}`}
-                    href="#"
+                    href={categoryHref}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate(categoryHref);
+                    }}
                     className="group relative w-44 md:w-56 h-44 md:h-56 shrink-0 snap-center rounded-sm overflow-hidden"
                   >
                     {catImageUrl ? (

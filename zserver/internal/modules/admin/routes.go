@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"ecom/go/internal/modules/admin/analytics"
 	"ecom/go/internal/modules/admin/auth"
 	"ecom/go/internal/modules/admin/content"
 	"ecom/go/internal/modules/admin/dashboard"
@@ -19,6 +20,9 @@ func RegisterRoutes(r *gin.RouterGroup) {
 
 		// Dashboard routes
 		dashboard.RegisterRoutes(admin)
+
+		// Analytics routes
+		analytics.RegisterRoutes(admin)
 
 		// Inventory routes
 		inventory.RegisterRoutes(admin)

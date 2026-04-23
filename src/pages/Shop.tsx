@@ -188,9 +188,9 @@ const Shop = () => {
         <div className="container mx-auto px-2 sm:px-4">
 
           {/* Search and Category Row */}
-          <div className="mb-6 sm:mb-8 flex flex-col gap-3 sm:gap-4">
+          <div className="mb-6 sm:mb-8 flex flex-col items-center md:flex-row md:items-center md:justify-center gap-3 sm:gap-4">
             {/* Search Bar */}
-            <form onSubmit={handleSearch} className="w-full">
+            <form onSubmit={handleSearch} className="w-full max-w-md md:max-w-none md:w-[320px] lg:w-[380px] shrink-0">
               <div className="relative">
                 <Search size={16} className="sm:w-5 sm:h-5 absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input
@@ -212,7 +212,7 @@ const Shop = () => {
             </form>
 
             {/* Category Tabs */}
-            <div className="flex flex-col w-full">
+            <div className="flex flex-col w-full max-w-[780px] md:w-auto">
               <div 
                 ref={categoryScrollRef}
                 onScroll={handleCategoryScroll}
@@ -346,11 +346,11 @@ const Shop = () => {
                 </div>
               ) : (
                 <>
-                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 md:gap-4 lg:gap-6">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 md:gap-4 lg:gap-6 items-stretch">
                     {paginatedProducts.map((p) => (
                       <div
                         key={p.id}
-                        className="cursor-pointer"
+                        className="cursor-pointer h-full"
                         onClick={() => navigate(`/product/${p.id}`)}
                       >
                         <ProductCard

@@ -66,13 +66,13 @@ const ProductCard = ({ name, id = "", priceNpr, originalPriceNpr, image, images,
   };
 
   return (
-    <div className="group bg-white rounded-lg shadow-sm hover:shadow-lg hover:scale-105 hover:-translate-y-1 transition-all duration-300 ease-out cursor-pointer">
+    <div className="group h-full bg-white rounded-lg shadow-sm hover:shadow-lg hover:scale-105 hover:-translate-y-1 transition-all duration-300 ease-out cursor-pointer flex flex-col">
       {/* Image Container */}
       <div className="relative aspect-square overflow-hidden rounded-lg bg-secondary mb-4">
         <img
           src={allImages[currentImageIndex]}
           alt={name}
-          className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+          className="w-full h-full object-cover grayscale-[12%] saturate-90 brightness-95 contrast-95 transition-all duration-500 group-hover:scale-105 group-hover:grayscale-0 group-hover:saturate-125 group-hover:brightness-105 group-hover:contrast-110"
         />
         
         {badge && (
@@ -106,37 +106,34 @@ const ProductCard = ({ name, id = "", priceNpr, originalPriceNpr, image, images,
       <div className="h-px bg-border opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
       {/* Content Container */}
-      <div className="px-4 pb-4 pt-2 flex flex-col min-h-[180px] sm:min-h-[200px]">
+      <div className="px-4 pb-6 pt-2 flex flex-col flex-1">
         {/* Product Name */}
-        <h3 className="font-archivo text-xs sm:text-sm md:text-[15px] font-bold text-foreground mb-2 line-clamp-2 flex-shrink-0">
+        <h3 className="font-archivo text-[15px] font-bold text-foreground mb-2 line-clamp-2 leading-5 min-h-10">
           {name}
         </h3>
 
         {/* Description */}
         {description && (
-          <p className="text-[11px] sm:text-xs text-muted-foreground mb-3 line-clamp-2 flex-shrink-0">
+          <p className="text-xs text-muted-foreground mb-3 line-clamp-2">
             {description}
           </p>
         )}
 
-        {/* Spacer to push button to bottom */}
-        <div className="flex-1" />
-
         {/* Price and Add to Cart */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 flex-shrink-0">
+        <div className="flex flex-col items-start gap-2.5 mt-auto pt-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-xs sm:text-sm md:text-base font-semibold text-foreground">
+            <span className="text-base font-semibold text-foreground">
               Rs. {priceNpr.toLocaleString()}
             </span>
             {originalPriceNpr && (
-              <span className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground line-through">
+              <span className="text-xs text-muted-foreground line-through">
                 Rs. {originalPriceNpr.toLocaleString()}
               </span>
             )}
           </div>
           <button
             onClick={handleAddToCart}
-            className="px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2.5 bg-foreground text-background text-xs sm:text-sm font-semibold rounded-full hover:bg-foreground/90 transition-colors whitespace-nowrap w-full sm:w-auto text-center"
+            className="w-full sm:w-auto px-3 sm:px-6 py-2 sm:py-2.5 bg-foreground text-background text-xs sm:text-sm font-semibold rounded-full hover:bg-foreground/90 transition-colors whitespace-nowrap"
           >
             Add to cart
           </button>

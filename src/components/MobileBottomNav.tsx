@@ -12,15 +12,15 @@ const MobileBottomNav = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const tabs = [
-    { icon: Home, label: "Home", path: "/", action: () => navigate("/") },
-    { icon: Search, label: "Shop", path: "/shop", action: () => navigate("/shop") },
+    { icon: Home, label: "Home", path: "/", action: () => { setIsCartOpen(false); navigate("/"); } },
+    { icon: Search, label: "Shop", path: "/shop", action: () => { setIsCartOpen(false); navigate("/shop"); } },
     {
       icon: ShoppingBag,
       label: "Cart",
       path: "/cart",
       action: () => { if (user) setIsCartOpen(true); else navigate("/auth"); },
     },
-    { icon: Package, label: "Orders", path: "/my-orders", action: () => { if (user) navigate("/my-orders"); else navigate("/auth"); } },
+    { icon: Package, label: "Orders", path: "/my-orders", action: () => { setIsCartOpen(false); if (user) navigate("/my-orders"); else navigate("/auth"); } },
   ];
 
   return (
